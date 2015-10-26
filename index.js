@@ -12,8 +12,9 @@ function PostgresInterval (raw) {
 }
 var properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
 PostgresInterval.prototype.toPostgres = function () {
-  return properties
-    .filter(this.hasOwnProperty, this)
+  var filtered = properties.filter(this.hasOwnProperty, this)
+  if (filtered.length === 0) return '0'
+  return filtered
     .map(function (property) {
       return this[property] + ' ' + property
     }, this)

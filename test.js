@@ -13,5 +13,6 @@ test(function (t) {
   t.equal(interval('01:02:03').toPostgres(), '3 seconds 2 minutes 1 hours')
   t.equal(interval('1 year -32 days').toPostgres(), '-32 days 1 years')
   t.equal(interval('1 day -00:00:03').toPostgres(), '-3 seconds 1 days')
+  t.equal(interval('00:00:00').toPostgres(), '0')
   t.end()
 })
