@@ -25,7 +25,7 @@ var NUMBER = '([+-]?\\d+)'
 var YEAR = NUMBER + '\\s+years?'
 var MONTH = NUMBER + '\\s+mons?'
 var DAY = NUMBER + '\\s+days?'
-var TIME = '([+-])?(\\d\\d):(\\d\\d):(\\d\\d):?(\\d\\d\\d)?'
+var TIME = '([+-])?([\\d]*):(\\d\\d):(\\d\\d):?(\\d\\d\\d)?'
 var INTERVAL = new RegExp([YEAR, MONTH, DAY, TIME].map(function (regexString) {
   return '(' + regexString + ')?'
 })
