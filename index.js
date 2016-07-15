@@ -15,20 +15,22 @@ PostgresInterval.prototype.toPostgres = function () {
   var filtered = properties.filter(this.hasOwnProperty, this)
 
   // In addition to `properties`, we need to account for fractions of seconds.
-  if (this.milliseconds && (-1 === filtered.indexOf('seconds')))
-    filtered.push('seconds');
+  if (this.milliseconds && (filtered.indexOf('seconds') === -1)) {
+    filtered.push('seconds')
+  }
 
   if (filtered.length === 0) return '0'
   return filtered
     .map(function (property) {
-      var value = this[property] || 0;
+      var value = this[property] || 0
 
       // Account for fractional part of seconds,
       // remove trailing zeroes.
-      if (property === 'seconds' && this.milliseconds)
-        value += '.' + String(this.milliseconds * 1000).replace(/[0]+$/g, '');
+      if (property === 'seconds' && this.milliseconds) {
+        value += '.' + String(this.milliseconds * 1000).replace(/[0]+$/g, '')
+      }
 
-      return value + ' ' + property;
+      return value + ' ' + property
     }, this)
     .join(' ')
 }
@@ -58,9 +60,9 @@ var negatives = ['hours', 'minutes', 'seconds']
 
 function parseMilliseconds (fraction) {
   // add omitted zeroes
-  var microseconds = fraction + '000000'.slice(fraction.length);
+  var microseconds = fraction + '000000'.slice(fraction.length)
   console.log({fraction, microseconds})
-  return parseInt(microseconds, 10) / 1000;
+  return parseInt(microseconds, 10) / 1000
 }
 
 function parse (interval) {
