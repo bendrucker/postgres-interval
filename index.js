@@ -61,7 +61,6 @@ var negatives = ['hours', 'minutes', 'seconds']
 function parseMilliseconds (fraction) {
   // add omitted zeroes
   var microseconds = fraction + '000000'.slice(fraction.length)
-  console.log({fraction, microseconds})
   return parseInt(microseconds, 10) / 1000
 }
 
