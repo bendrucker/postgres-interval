@@ -21,5 +21,8 @@ test(function (t) {
   t.equal(interval('00:00:00.5000').milliseconds, 500)
   t.equal(interval('00:00:01.100').toPostgres(), '1.1 seconds')
   t.equal(interval('00:00:00.5').toPostgres(), '0.5 seconds')
+  t.equal(interval('00:00:00.100500').milliseconds, 100.5)
+  t.equal(interval('00:00:00.100500').toPostgres(), '0.1005 seconds')
+  t.equal(interval('00:00:00.123456').toPostgres(), '0.123456 seconds')
   t.end()
 })

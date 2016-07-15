@@ -26,7 +26,7 @@ PostgresInterval.prototype.toPostgres = function () {
       // Account for fractional part of seconds,
       // remove trailing zeroes.
       if (property === 'seconds' && this.milliseconds)
-        value += '.' + String(this.milliseconds).replace(/0+$/g, '');
+        value += '.' + String(this.milliseconds * 1000).replace(/[0]+$/g, '');
 
       return value + ' ' + property;
     }, this)
@@ -37,7 +37,7 @@ var NUMBER = '([+-]?\\d+)'
 var YEAR = NUMBER + '\\s+years?'
 var MONTH = NUMBER + '\\s+mons?'
 var DAY = NUMBER + '\\s+days?'
-var TIME = '([+-])?([\\d]*):(\\d\\d):(\\d\\d)\.?(\\d{1,3})?'
+var TIME = '([+-])?([\\d]*):(\\d\\d):(\\d\\d)\.?(\\d{1,6})?'
 var INTERVAL = new RegExp([YEAR, MONTH, DAY, TIME].map(function (regexString) {
   return '(' + regexString + ')?'
 })
@@ -56,10 +56,11 @@ var positions = {
 // We can use negative time
 var negatives = ['hours', 'minutes', 'seconds']
 
-function parseSecondsFraction (fraction) {
+function parseMilliseconds (fraction) {
   // add omitted zeroes
-  var millis = fraction + '000'.slice(fraction.length);
-  return parseInt(millis, 10);
+  var microseconds = fraction + '000000'.slice(fraction.length);
+  console.log({fraction, microseconds})
+  return parseInt(microseconds, 10) / 1000;
 }
 
 function parse (interval) {
@@ -75,7 +76,7 @@ function parse (interval) {
       // milliseconds are actually microseconds (up to 6 digits)
       // with omitted trailing zeroes.
       value = property === 'milliseconds'
-        ? parseSecondsFraction(value)
+        ? parseMilliseconds(value)
         : parseInt(value, 10)
       // no zeros
       if (!value) return parsed
