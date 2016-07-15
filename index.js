@@ -25,7 +25,7 @@ var NUMBER = '([+-]?\\d+)'
 var YEAR = NUMBER + '\\s+years?'
 var MONTH = NUMBER + '\\s+mons?'
 var DAY = NUMBER + '\\s+days?'
-var TIME = '([+-])?([\\d]*):(\\d\\d):(\\d\\d):?(\\d\\d\\d)?'
+var TIME = '([+-])?([\\d]*):(\\d\\d):(\\d\\d)\.?(\\d{1,3})?'
 var INTERVAL = new RegExp([YEAR, MONTH, DAY, TIME].map(function (regexString) {
   return '(' + regexString + ')?'
 })
@@ -44,6 +44,12 @@ var positions = {
 // We can use negative time
 var negatives = ['hours', 'minutes', 'seconds']
 
+function parseSecondsFraction (fraction) {
+  // add omitted zeroes
+  var millis = fraction + '000'.slice(fraction.length);
+  return parseInt(millis, 10);
+}
+
 function parse (interval) {
   if (!interval) return {}
   var matches = INTERVAL.exec(interval)
@@ -54,7 +60,11 @@ function parse (interval) {
       var value = matches[position]
       // no empty string
       if (!value) return parsed
-      value = parseInt(value, 10)
+      // milliseconds are actually microseconds (up to 6 digits)
+      // with omitted trailing zeroes.
+      value = property === 'milliseconds'
+        ? parseSecondsFraction(value)
+        : parseInt(value, 10)
       // no zeros
       if (!value) return parsed
       if (isNegative && ~negatives.indexOf(property)) {
