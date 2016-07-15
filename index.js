@@ -13,10 +13,22 @@ function PostgresInterval (raw) {
 var properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
 PostgresInterval.prototype.toPostgres = function () {
   var filtered = properties.filter(this.hasOwnProperty, this)
+
+  // In addition to `properties`, we need to account for fractions of seconds.
+  if (this.milliseconds && (-1 === filtered.indexOf('seconds')))
+    filtered.push('seconds');
+
   if (filtered.length === 0) return '0'
   return filtered
     .map(function (property) {
-      return this[property] + ' ' + property
+      var value = this[property] || 0;
+
+      // Account for fractional part of seconds,
+      // remove trailing zeroes.
+      if (property === 'seconds' && this.milliseconds)
+        value += '.' + String(this.milliseconds).replace(/0+$/g, '');
+
+      return value + ' ' + property;
     }, this)
     .join(' ')
 }

@@ -19,5 +19,7 @@ test(function (t) {
   t.equal(interval('00:00:00.50').milliseconds, 500)
   t.equal(interval('00:00:00.500').milliseconds, 500)
   t.equal(interval('00:00:00.5000').milliseconds, 500)
+  t.equal(interval('00:00:01.100').toPostgres(), '1.1 seconds')
+  t.equal(interval('00:00:00.5').toPostgres(), '0.5 seconds')
   t.end()
 })
