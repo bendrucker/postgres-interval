@@ -1,66 +1,86 @@
-'use strict'
+'use strict';
 
-var extend = require('xtend/mutable')
+const labels = {
+  'year': 'years',
+  'years': 'years',
+  'mon': 'months',
+  'mons': 'months',
+  'day': 'days',
+  'days': 'days',
+  'hour': 'hours',
+  'hours ': 'hours',
+  'min': 'minutes',
+  'mins ': 'minutes',
+  'sec': 'seconds',
+  'secs': 'seconds'
+};
 
-module.exports = PostgresInterval
+const units = Object.keys(labels)
+  .map(key => labels[key])
+  .filter((val, idx, self) => self.indexOf(val) === idx);
 
-function PostgresInterval (raw) {
-  if (!(this instanceof PostgresInterval)) {
-    return new PostgresInterval(raw)
+const defaults = units.reduce((self, label) => {
+  self[label] = 0;
+  return self;
+}, {});
+
+// Returns an array of labeled units and their amounts.
+const captureUnits = (string) => {
+  const re = /([+-]?\d+ (?:years?|days?|mons?))/g;
+  const matches = string.match(re);
+  const units = {};
+
+  if (matches) {
+    matches.forEach(unit => {
+      const [value, label] = unit.split(' ');
+      units[labels[label]] = parseFloat(value);
+    });
   }
-  extend(this, parse(raw))
-}
-var properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
-PostgresInterval.prototype.toPostgres = function () {
-  var filtered = properties.filter(this.hasOwnProperty, this)
-  if (filtered.length === 0) return '0'
-  return filtered
-    .map(function (property) {
-      return this[property] + ' ' + property
-    }, this)
-    .join(' ')
+
+  return units;
+};
+
+const captureTime = (string) => {
+  const re = /((?:[+-]?\d+):(?:\d{2}):(?:\d{2})(?:\.\d{1,6})?)/;
+  const matches = re.exec(string);
+  let time = {};
+
+  if (matches) {
+    let [hours, minutes, seconds] = matches[1].split(':').map(parseFloat);
+
+    if (hours < 0) {
+      minutes = -minutes;
+      seconds = -seconds;
+    }
+
+    time = {hours, minutes, seconds};
+  }
+
+  return time;
+};
+
+class PostgresInterval {
+  constructor (raw) {
+    Object.assign(
+      this,
+      {_raw: raw},
+      defaults,
+      captureUnits(raw),
+      captureTime(raw)
+    );
+  }
+
+  toString () {
+    return units
+      .map(unit => `${this[unit]} ${unit}`)
+      .join(' ');
+  }
+
+  toPostgres () {
+    return String(this);
+  }
 }
 
-var NUMBER = '([+-]?\\d+)'
-var YEAR = NUMBER + '\\s+years?'
-var MONTH = NUMBER + '\\s+mons?'
-var DAY = NUMBER + '\\s+days?'
-var TIME = '([+-])?([\\d]*):(\\d\\d):(\\d\\d):?(\\d\\d\\d)?'
-var INTERVAL = new RegExp([YEAR, MONTH, DAY, TIME].map(function (regexString) {
-  return '(' + regexString + ')?'
-})
-.join('\\s*'))
-
-// Positions of values in regex match
-var positions = {
-  years: 2,
-  months: 4,
-  days: 6,
-  hours: 9,
-  minutes: 10,
-  seconds: 11,
-  milliseconds: 12
-}
-// We can use negative time
-var negatives = ['hours', 'minutes', 'seconds']
-
-function parse (interval) {
-  if (!interval) return {}
-  var matches = INTERVAL.exec(interval)
-  var isNegative = matches[8] === '-'
-  return Object.keys(positions)
-    .reduce(function (parsed, property) {
-      var position = positions[property]
-      var value = matches[position]
-      // no empty string
-      if (!value) return parsed
-      value = parseInt(value, 10)
-      // no zeros
-      if (!value) return parsed
-      if (isNegative && ~negatives.indexOf(property)) {
-        value *= -1
-      }
-      parsed[property] = value
-      return parsed
-    }, {})
-}
+module.exports = function parseInterval (raw) {
+  return new PostgresInterval(raw);
+};

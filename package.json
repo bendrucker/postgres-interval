@@ -11,22 +11,21 @@
     "url": "bendrucker.me"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4"
   },
   "scripts": {
-    "test": "standard && tape test.js"
+    "test": "mocha test.js"
   },
   "keywords": [
     "postgres",
     "interval",
     "parser"
   ],
-  "dependencies": {
-    "xtend": "^4.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "tape": "^4.0.0",
-    "standard": "^4.0.0"
+    "expect.js": "^0.3.1",
+    "mocha": "^2.5.3",
+    "pg": "^6.0.2"
   },
   "files": [
     "index.js",
