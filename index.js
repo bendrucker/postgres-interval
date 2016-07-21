@@ -16,23 +16,26 @@ var labels = {
 }
 
 var units = Object.keys(labels)
-  .map(key => labels[key])
-  .filter((val, idx, self) => self.indexOf(val) === idx)
+  .map(function (key) { return labels[key] })
+  .filter(function (val, idx, self) { return self.indexOf(val) === idx })
 
-var defaults = units.reduce((self, label) => {
+var defaults = units.reduce(function (self, label) {
   self[label] = 0
   return self
 }, {})
 
 // Returns an array of labeled units and their amounts.
-var captureUnits = (string) => {
+var captureUnits = function (string) {
   var re = /([+-]?\d+ (?:years?|days?|mons?))/g
   var matches = string.match(re)
   var units = {}
 
   if (matches) {
-    matches.forEach(unit => {
-      var [value, label] = unit.split(' ')
+    matches.forEach(function (unit) {
+      var parts = unit.split(' ')
+      var value = parts[0]
+      var label = parts[1]
+
       units[labels[label]] = parseFloat(value)
     })
   }
@@ -40,14 +43,17 @@ var captureUnits = (string) => {
   return units
 }
 
-var captureTime = (string) => {
+var captureTime = function (string) {
   var re = /((?:[+-]?\d+):(?:\d{2}):(?:\d{2})(?:\.\d{1,6})?)/
   var matches = re.exec(string)
   var time = {}
 
   if (matches) {
     var isNegative = matches[0][0] === '-'
-    var [hours, minutes, seconds] = matches[1].split(':').map(parseFloat)
+    var parts = matches[1].split(':').map(parseFloat)
+    var hours = parts[0]
+    var minutes = parts[1]
+    var seconds = parts[2]
 
     if (isNegative) {
       // Invert non-zero amounts,
@@ -57,7 +63,11 @@ var captureTime = (string) => {
       seconds = 0 - seconds
     }
 
-    time = {hours, minutes, seconds}
+    time = {
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds
+    }
   }
 
   return time
