@@ -11,10 +11,12 @@
     "url": "bendrucker.me"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "mocha test.js"
+    "pre-test": "standard",
+    "test": "tape test.js",
+    "testw": "nodemon -w index.js -w test.js -x npm test"
   },
   "keywords": [
     "postgres",
@@ -23,9 +25,10 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "expect.js": "^0.3.1",
-    "mocha": "^2.5.3",
-    "pg": "^6.0.2"
+    "async": "^2.0.0",
+    "pg": "^6.0.2",
+    "standard": "^7.1.2",
+    "tape": "^4.6.0"
   },
   "files": [
     "index.js",

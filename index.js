@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const labels = {
+var labels = {
   'year': 'years',
   'years': 'years',
   'mon': 'months',
@@ -13,74 +13,72 @@ const labels = {
   'mins ': 'minutes',
   'sec': 'seconds',
   'secs': 'seconds'
-};
+}
 
-const units = Object.keys(labels)
+var units = Object.keys(labels)
   .map(key => labels[key])
-  .filter((val, idx, self) => self.indexOf(val) === idx);
+  .filter((val, idx, self) => self.indexOf(val) === idx)
 
-const defaults = units.reduce((self, label) => {
-  self[label] = 0;
-  return self;
-}, {});
+var defaults = units.reduce((self, label) => {
+  self[label] = 0
+  return self
+}, {})
 
 // Returns an array of labeled units and their amounts.
-const captureUnits = (string) => {
-  const re = /([+-]?\d+ (?:years?|days?|mons?))/g;
-  const matches = string.match(re);
-  const units = {};
+var captureUnits = (string) => {
+  var re = /([+-]?\d+ (?:years?|days?|mons?))/g
+  var matches = string.match(re)
+  var units = {}
 
   if (matches) {
     matches.forEach(unit => {
-      const [value, label] = unit.split(' ');
-      units[labels[label]] = parseFloat(value);
-    });
+      var [value, label] = unit.split(' ')
+      units[labels[label]] = parseFloat(value)
+    })
   }
 
-  return units;
-};
+  return units
+}
 
-const captureTime = (string) => {
-  const re = /((?:[+-]?\d+):(?:\d{2}):(?:\d{2})(?:\.\d{1,6})?)/;
-  const matches = re.exec(string);
-  let time = {};
+var captureTime = (string) => {
+  var re = /((?:[+-]?\d+):(?:\d{2}):(?:\d{2})(?:\.\d{1,6})?)/
+  var matches = re.exec(string)
+  var time = {}
 
   if (matches) {
-    let [hours, minutes, seconds] = matches[1].split(':').map(parseFloat);
+    var [hours, minutes, seconds] = matches[1].split(':').map(parseFloat)
 
     if (hours < 0) {
-      minutes = -minutes;
-      seconds = -seconds;
+      minutes = -minutes
+      seconds = -seconds
     }
 
-    time = {hours, minutes, seconds};
+    time = {hours, minutes, seconds}
   }
 
-  return time;
-};
+  return time
+}
 
-class PostgresInterval {
-  constructor (raw) {
-    Object.assign(
-      this,
-      {_raw: raw},
-      defaults,
-      captureUnits(raw),
-      captureTime(raw)
-    );
-  }
+function PostgresInterval (raw) {
+  Object.assign(
+    this,
+    {_raw: raw},
+    defaults,
+    captureUnits(raw),
+    captureTime(raw)
+  )
+}
 
-  toString () {
-    return units
-      .map(unit => `${this[unit]} ${unit}`)
-      .join(' ');
-  }
+PostgresInterval.prototype.toString = function () {
+  return this.toPostgres()
+}
 
-  toPostgres () {
-    return String(this);
-  }
+PostgresInterval.prototype.toPostgres = function () {
+  return units
+    .map(function (unit) { return this[unit] + ' ' + unit }, this)
+    .join(' ')
 }
 
 module.exports = function parseInterval (raw) {
-  return new PostgresInterval(raw);
-};
+  return new PostgresInterval(raw)
+}
