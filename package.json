@@ -23,7 +23,9 @@
     "interval",
     "parser"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "xtend": "^4.0.1"
+  },
   "devDependencies": {
     "async": "^2.0.0",
     "pg": "^6.0.2",

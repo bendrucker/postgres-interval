@@ -1,5 +1,7 @@
 'use strict'
 
+var xtend = require('xtend/mutable')
+
 var labels = {
   'year': 'years',
   'years': 'years',
@@ -74,9 +76,8 @@ var captureTime = function (string) {
 }
 
 function PostgresInterval (raw) {
-  Object.assign(
+  xtend(
     this,
-    {_raw: raw},
     defaults,
     captureUnits(raw),
     captureTime(raw)
