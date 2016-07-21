@@ -46,11 +46,15 @@ var captureTime = (string) => {
   var time = {}
 
   if (matches) {
+    var isNegative = matches[0][0] === '-'
     var [hours, minutes, seconds] = matches[1].split(':').map(parseFloat)
 
-    if (hours < 0) {
-      minutes = -minutes
-      seconds = -seconds
+    if (isNegative) {
+      // Invert non-zero amounts,
+      // but do not convert 0 to -0.
+      hours = hours > 0 ? -hours : hours
+      minutes = 0 - minutes
+      seconds = 0 - seconds
     }
 
     time = {hours, minutes, seconds}
