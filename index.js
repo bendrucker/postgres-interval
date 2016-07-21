@@ -2,6 +2,11 @@
 
 var xtend = require('xtend/mutable')
 
+/**
+ * Key is what Postgres uses,
+ * value is what we place into PostgresInterval instance.
+ * @type {Object}
+ */
 var labels = {
   'year': 'years',
   'years': 'years',
@@ -17,16 +22,29 @@ var labels = {
   'secs': 'seconds'
 }
 
+/**
+ * Awkward version of saying `Object.values(labels).unique()`.
+ * @type {[String]}
+ */
 var units = Object.keys(labels)
   .map(function (key) { return labels[key] })
   .filter(function (val, idx, self) { return self.indexOf(val) === idx })
 
+/**
+ * Generates defaults props for PostgresInterval instance.
+ * @type {Object} Keys are from `units`, values are 0.
+ */
 var defaults = units.reduce(function (self, label) {
   self[label] = 0
   return self
 }, {})
 
-// Returns an array of labeled units and their amounts.
+/**
+ * Returns object for extending PostgresInterval with,
+ * parses portion of the @string that contains `amount unit`.
+ * @param  {String} string Database output.
+ * @return {Object}
+ */
 var captureUnits = function (string) {
   var re = /([+-]?\d+ (?:years?|days?|mons?))/g
   var matches = string.match(re)
@@ -45,6 +63,12 @@ var captureUnits = function (string) {
   return units
 }
 
+/**
+ * Returns object for extending PostgresInterval with,
+ * parses time portion of the @string.
+ * @param  {String} string Database output.
+ * @return {Object}
+ */
 var captureTime = function (string) {
   var re = /((?:[+-]?\d+):(?:\d{2}):(?:\d{2})(?:\.\d{1,6})?)/
   var matches = re.exec(string)
@@ -88,6 +112,11 @@ PostgresInterval.prototype.toString = function () {
   return this.toPostgres()
 }
 
+/**
+ * Returns an interval string.
+ * This allows the interval object to be passed into prepared statements.
+ * @return {String}
+ */
 PostgresInterval.prototype.toPostgres = function () {
   return units
     .map(function (unit) { return this[unit] + ' ' + unit }, this)
