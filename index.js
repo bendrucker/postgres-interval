@@ -45,9 +45,9 @@ var defaults = units.reduce(function (self, label) {
  * @param  {String} string Database output.
  * @return {Object}
  */
+var captureUnitsRegexp = /([+-]?\d+ (?:years?|days?|mons?))/g
 var captureUnits = function (string) {
-  var re = /([+-]?\d+ (?:years?|days?|mons?))/g
-  var matches = string.match(re)
+  var matches = string.match(captureUnitsRegexp)
   var units = {}
 
   if (matches) {
@@ -69,9 +69,9 @@ var captureUnits = function (string) {
  * @param  {String} string Database output.
  * @return {Object}
  */
+var captureTimeRegexp = /((?:[+-]?\d+):(?:\d{2}):(?:\d{2})(?:\.\d{1,6})?)/
 var captureTime = function (string) {
-  var re = /((?:[+-]?\d+):(?:\d{2}):(?:\d{2})(?:\.\d{1,6})?)/
-  var matches = re.exec(string)
+  var matches = captureTimeRegexp.exec(string)
   var time = {}
 
   if (matches) {
