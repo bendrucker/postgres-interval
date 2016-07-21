@@ -14,8 +14,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "pre-test": "standard",
-    "test": "tape test.js",
+    "pretest": "standard",
+    "test": "node test.js",
     "testw": "nodemon -w index.js -w test.js -x npm test"
   },
   "keywords": [
@@ -27,6 +27,7 @@
   "devDependencies": {
     "async": "^2.0.0",
     "pg": "^6.0.2",
+    "promise-polyfill": "^6.0.0",
     "standard": "^7.1.2",
     "tape": "^4.6.0"
   },

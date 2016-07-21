@@ -3,7 +3,12 @@
 var pg = require('pg')
 var tape = require('tape')
 var async = require('async')
-var parse = require('.')
+var parse = require('./index')
+
+// Fake promise for older node verions.
+if (typeof Promise === 'undefined') {
+  global.Promise = require('promise-polyfill')
+}
 
 // callback(err, [{
 //  input // String   element of `inputs` array
