@@ -39,6 +39,10 @@ function selectFromPostgres (callback) {
     callback(err, results)
   }
 
+  // These are actually what Postgres outputs
+  // (I ran original values through `psql`).
+  // We still need to query DB, so we can be 100% sure,
+  // that `.toPostgres()` produces the same value.
   async.map([
     '04:05:06.123456',
     '1 year',
@@ -48,22 +52,22 @@ function selectFromPostgres (callback) {
     '1 year 1 mon',
     '2 mons 1 day',
     '3 days 04:05:06.5',
-    '-1 year -2 mons +3 days -04:05:06',
-    '1 years 1 mon',
-    '3 days -1 year -2 mons -04:05:06',
+    '-1 years -2 mons +3 days -04:05:06',
+    '1 year 1 mon',
+    '-1 years -2 mons +3 days -04:05:06',
     '01:02:03',
     '100:02:03',
     '1 year -32 days',
     '1 day -00:00:03',
     '00:00:00',
     '00:00:00.5',
-    '00:00:00.50',
-    '00:00:00.500',
-    '00:00:00.5000',
-    '00:00:01.100',
     '00:00:00.5',
-    '00:00:00.100500',
-    '00:00:00.100500',
+    '00:00:00.5',
+    '00:00:00.5',
+    '00:00:01.1',
+    '00:00:00.5',
+    '00:00:00.1005',
+    '00:00:00.1005',
     '00:00:00.123456'
   ], iterator, done)
 }
