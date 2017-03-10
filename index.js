@@ -47,7 +47,17 @@ var dateProperties = ['years', 'months', 'days']
 var timeProperties = ['hours', 'minutes', 'seconds']
 // according to ISO 8601
 PostgresInterval.prototype.toISO = function () {
-  var buildProperty = function (property) {
+  var datePart = dateProperties
+    .map(buildProperty, this)
+    .join('')
+
+  var timePart = timeProperties
+    .map(buildProperty, this)
+    .join('')
+
+  return 'P' + datePart + 'T' + timePart
+
+  function buildProperty (property) {
     var value = this[property] || 0
 
     // Account for fractional part of seconds,
@@ -58,13 +68,7 @@ PostgresInterval.prototype.toISO = function () {
 
     return value + propertiesISOEquivalent[property]
   }
-  var datePart = dateProperties
-    .map(buildProperty, this)
-    .join('')
-  var timePart = timeProperties
-    .map(buildProperty, this)
-    .join('')
-  return 'P' + datePart + 'T' + timePart
+
 }
 
 var NUMBER = '([+-]?\\d+)'
