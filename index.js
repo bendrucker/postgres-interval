@@ -35,6 +35,42 @@ PostgresInterval.prototype.toPostgres = function () {
     .join(' ')
 }
 
+var propertiesISOEquivalent = {
+  years: 'Y',
+  months: 'M',
+  days: 'D',
+  hours: 'H',
+  minutes: 'M',
+  seconds: 'S'
+}
+var dateProperties = ['years', 'months', 'days']
+var timeProperties = ['hours', 'minutes', 'seconds']
+// according to ISO 8601
+PostgresInterval.prototype.toISO = function () {
+  var datePart = dateProperties
+    .map(buildProperty, this)
+    .join('')
+
+  var timePart = timeProperties
+    .map(buildProperty, this)
+    .join('')
+
+  return 'P' + datePart + 'T' + timePart
+
+  function buildProperty (property) {
+    var value = this[property] || 0
+
+    // Account for fractional part of seconds,
+    // remove trailing zeroes.
+    if (property === 'seconds' && this.milliseconds) {
+      value += '.' + String(this.milliseconds * 1000).replace(/[0]+$/g, '')
+    }
+
+    return value + propertiesISOEquivalent[property]
+  }
+
+}
+
 var NUMBER = '([+-]?\\d+)'
 var YEAR = NUMBER + '\\s+years?'
 var MONTH = NUMBER + '\\s+mons?'
