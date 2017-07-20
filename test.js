@@ -10,6 +10,12 @@ test(function (t) {
     seconds: 3,
     milliseconds: 456
   })
+  t.deepEqual(interval('-01:02:03.456'), {
+    hours: -1,
+    minutes: -2,
+    seconds: -3,
+    milliseconds: -456
+  })
   t.equal(interval('01:02:03').toPostgres(), '3 seconds 2 minutes 1 hours')
   t.equal(interval('100:02:03').toPostgres(), '3 seconds 2 minutes 100 hours')
   t.equal(interval('1 year -32 days').toPostgres(), '-32 days 1 years')
@@ -24,6 +30,7 @@ test(function (t) {
   t.equal(interval('00:00:00.100500').milliseconds, 100.5)
   t.equal(interval('00:00:00.100500').toPostgres(), '0.1005 seconds')
   t.equal(interval('00:00:00.123456').toPostgres(), '0.123456 seconds')
+  t.equal(interval('-00:00:00.123456').toPostgres(), '-0.123456 seconds')
   // toISO tests
   t.equal(interval('01:02:03').toISO(), 'P0Y0M0DT1H2M3S')
   t.equal(interval('100:02:03').toISO(), 'P0Y0M0DT100H2M3S')
@@ -34,5 +41,6 @@ test(function (t) {
   t.equal(interval('00:00:00.5').toISO(), 'P0Y0M0DT0H0M0.5S')
   t.equal(interval('00:00:00.100500').toISO(), 'P0Y0M0DT0H0M0.1005S')
   t.equal(interval('00:00:00.123456').toISO(), 'P0Y0M0DT0H0M0.123456S')
+  t.equal(interval('-00:00:00.123456').toISO(), 'P0Y0M0DT0H0M-0.123456S')
   t.end()
 })

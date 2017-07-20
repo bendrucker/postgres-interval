@@ -27,7 +27,7 @@ PostgresInterval.prototype.toPostgres = function () {
       // Account for fractional part of seconds,
       // remove trailing zeroes.
       if (property === 'seconds' && this.milliseconds) {
-        value += '.' + String(this.milliseconds * 1000).replace(/[0]+$/g, '')
+        value = (value + this.milliseconds / 1000).toFixed(6).replace(/0+$/, '')
       }
 
       return value + ' ' + property
@@ -63,7 +63,7 @@ PostgresInterval.prototype.toISO = function () {
     // Account for fractional part of seconds,
     // remove trailing zeroes.
     if (property === 'seconds' && this.milliseconds) {
-      value += '.' + String(this.milliseconds * 1000).replace(/[0]+$/g, '')
+      value = (value + this.milliseconds / 1000).toFixed(6).replace(/0+$/, '')
     }
 
     return value + propertiesISOEquivalent[property]
@@ -92,7 +92,7 @@ var positions = {
   milliseconds: 12
 }
 // We can use negative time
-var negatives = ['hours', 'minutes', 'seconds']
+var negatives = ['hours', 'minutes', 'seconds', 'milliseconds']
 
 function parseMilliseconds (fraction) {
   // add omitted zeroes
