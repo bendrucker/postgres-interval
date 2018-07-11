@@ -27,7 +27,7 @@ PostgresInterval.prototype.toPostgres = function () {
       // Account for fractional part of seconds,
       // remove trailing zeroes.
       if (property === 'seconds' && this.milliseconds) {
-        value = (value + this.milliseconds / 1000).toFixed(6).replace(/0+$/, '')
+        value = (value + this.milliseconds / 1000).toFixed(6).replace(/\.?0+$/, '')
       }
 
       return value + ' ' + property
