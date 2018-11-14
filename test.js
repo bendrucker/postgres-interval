@@ -22,6 +22,7 @@ test(function (t) {
   t.equal(interval('1 year -32 days').toPostgres(), '-32 days 1 years')
   t.equal(interval('1 day -00:00:03').toPostgres(), '-3 seconds 1 days')
   t.equal(interval('00:00:00').toPostgres(), '0')
+  t.equal(interval('00:00:00-5').milliseconds, undefined, 'invalid interval format')
   t.equal(interval('00:00:00.5').milliseconds, 500)
   t.equal(interval('00:00:00.50').milliseconds, 500)
   t.equal(interval('00:00:00.500').milliseconds, 500)
