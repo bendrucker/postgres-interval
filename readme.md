@@ -1,4 +1,4 @@
-# postgres-interval [![Build Status](https://travis-ci.org/bendrucker/postgres-interval.svg?branch=master)](https://travis-ci.org/bendrucker/postgres-interval)
+# postgres-interval [![Build Status](https://travis-ci.org/bendrucker/postgres-interval.svg?branch=master)](https://travis-ci.org/bendrucker/postgres-interval) [![Greenkeeper badge](https://badges.greenkeeper.io/bendrucker/postgres-interval.svg)](https://greenkeeper.io/)
 
 > Parse Postgres interval columns
 

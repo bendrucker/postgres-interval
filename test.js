@@ -4,7 +4,7 @@ var test = require('tape')
 var interval = require('./')
 
 test(function (t) {
-  t.equal(Object.assign(interval(), {milliseconds: 1000}).toPostgres(), '1 seconds')
+  t.equal(Object.assign(interval(), { milliseconds: 1000 }).toPostgres(), '1 seconds')
   t.deepEqual(interval('01:02:03.456'), {
     hours: 1,
     minutes: 2,
