@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "lib": [
+      "es2017"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "newLine": "lf",
+    "outDir": "./dist",
+    "strict": true,
+    "target": "es2017"
+  },
+  "exclude": [
+    "test"
+  ],
+  "include": [
+    "./**/*.ts"
+  ]
+}

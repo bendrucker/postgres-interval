@@ -1,1 +1,10 @@
+.idea
+.nyc_output
+.vscode
+coverage
+dist
 node_modules
+
+*.tgz
+package-lock.json
+yarn.lock

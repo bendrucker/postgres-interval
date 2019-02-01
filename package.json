@@ -1,8 +1,9 @@
 {
   "name": "postgres-interval",
-  "main": "index.js",
-  "version": "1.1.2",
-  "description": "Parse Postgres interval columns",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "version": "2.0.0",
+  "description": "Postgres interval parser and converter for Node.js and browser",
   "license": "MIT",
   "repository": "bendrucker/postgres-interval",
   "author": {
@@ -11,26 +12,49 @@
     "url": "bendrucker.me"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=8.15.0"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "coverage",
+      "dist",
+      "test"
+    ],
+    "reporter": [
+      "lcov"
+    ],
+    "all": true
   },
   "scripts": {
-    "test": "standard && tape test.js"
+    "build": "rimraf dist && tsc",
+    "test": "mocha",
+    "test-cov": "nyc mocha"
   },
   "keywords": [
     "postgres",
     "interval",
-    "parser"
+    "parser",
+    "converter"
   ],
-  "dependencies": {
-    "xtend": "^4.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "tape": "^4.0.0",
-    "standard": "^12.0.1"
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.21",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "rimraf": "^2.6.3",
+    "source-map-support": "^0.5.10",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.1"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
-    "readme.md"
+    "dist",
+    "README.md"
   ]
 }
