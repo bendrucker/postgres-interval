@@ -46,7 +46,7 @@ var propertiesISOEquivalent = {
 var dateProperties = ['years', 'months', 'days']
 var timeProperties = ['hours', 'minutes', 'seconds']
 // according to ISO 8601
-PostgresInterval.prototype.toISO = function () {
+PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = function () {
   var datePart = dateProperties
     .map(buildProperty, this)
     .join('')

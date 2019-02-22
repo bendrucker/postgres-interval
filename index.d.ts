@@ -11,6 +11,7 @@ declare namespace PostgresInterval {
     toPostgres(): string;
 
     toISO(): string;
+    toISOString(): string;
   }
 }
 

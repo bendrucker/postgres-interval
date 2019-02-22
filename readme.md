@@ -37,9 +37,11 @@ A Postgres interval string.
 
 Returns an interval string. This allows the interval object to be passed into prepared statements.
 
-#### `interval.toISO()` -> `string`
+#### `interval.toISOString()` -> `string`
 
 Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) compliant string.
+
+Also available as `interval.toISO()` for backwards compatibility.
 
 ## License
 
