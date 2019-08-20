@@ -14,7 +14,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "standard && tape test.js"
+    "test": "if-node-version '>= 8' standard && tape test.js"
   },
   "keywords": [
     "postgres",
@@ -25,8 +25,9 @@
     "xtend": "^4.0.0"
   },
   "devDependencies": {
-    "tape": "^4.0.0",
-    "standard": "^13.0.1"
+    "if-node-version": "^1.1.1",
+    "standard": "^13.0.1",
+    "tape": "^4.0.0"
   },
   "files": [
     "index.js",
