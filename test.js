@@ -2,21 +2,22 @@
 
 var test = require('tape')
 var interval = require('./')
+const PostgresInterval = require('./')
 
 test(function (t) {
   t.equal(Object.assign(interval(), { milliseconds: 1000 }).toPostgres(), '1 seconds')
-  t.deepEqual(interval('01:02:03.456'), {
+  t.deepEqual(interval('01:02:03.456'), Object.assign(new PostgresInterval(), {
     hours: 1,
     minutes: 2,
     seconds: 3,
     milliseconds: 456
-  })
-  t.deepEqual(interval('-01:02:03.456'), {
+  }))
+  t.deepEqual(interval('-01:02:03.456'), Object.assign(new PostgresInterval(), {
     hours: -1,
     minutes: -2,
     seconds: -3,
     milliseconds: -456
-  })
+  }))
   t.equal(interval('01:02:03').toPostgres(), '3 seconds 2 minutes 1 hours')
   t.equal(interval('100:02:03').toPostgres(), '3 seconds 2 minutes 100 hours')
   t.equal(interval('1 year -32 days').toPostgres(), '-32 days 1 years')
