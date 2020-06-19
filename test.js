@@ -1,7 +1,7 @@
 'use strict'
 
-var test = require('tape')
-var interval = require('./')
+const test = require('tape')
+const interval = require('./')
 const PostgresInterval = require('./')
 
 test(function (t) {
