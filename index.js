@@ -6,11 +6,16 @@ function PostgresInterval (raw) {
   if (!(this instanceof PostgresInterval)) {
     return new PostgresInterval(raw)
   }
+
+  for (const key in positions) {
+    this[key] = 0
+  }
+
   Object.assign(this, parse(raw))
 }
 const properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
 PostgresInterval.prototype.toPostgres = function () {
-  const filtered = properties.filter(this.hasOwnProperty, this)
+  const filtered = properties.filter(key => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0)
 
   // In addition to `properties`, we need to account for fractions of seconds.
   if (this.milliseconds && filtered.indexOf('seconds') < 0) {

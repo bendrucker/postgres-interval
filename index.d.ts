@@ -1,12 +1,12 @@
 declare namespace PostgresInterval {
   export interface IPostgresInterval {
-    years?: number;
-    months?: number;
-    days?: number;
-    hours?: number;
-    minutes?: number;
-    seconds?: number;
-    milliseconds?: number;
+    years: number;
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+    milliseconds: number;
 
     toPostgres(): string;
 

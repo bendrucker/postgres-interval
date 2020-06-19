@@ -20,12 +20,24 @@ test(function (t) {
       milliseconds: -456
     }))
 
-    t.equal(interval('00:00:00-5').milliseconds, undefined, 'invalid interval format')
+    t.equal(interval('00:00:00-5').milliseconds, 0, 'invalid interval format')
     t.equal(interval('00:00:00.5').milliseconds, 500)
     t.equal(interval('00:00:00.50').milliseconds, 500)
     t.equal(interval('00:00:00.500').milliseconds, 500)
     t.equal(interval('00:00:00.5000').milliseconds, 500)
     t.equal(interval('00:00:00.100500').milliseconds, 100.5)
+
+    t.test('zero', function (t) {
+      const result = interval('00:00:00')
+      t.equal(result.years, 0)
+      t.equal(result.months, 0)
+      t.equal(result.days, 0)
+      t.equal(result.hours, 0)
+      t.equal(result.seconds, 0)
+      t.equal(result.milliseconds, 0)
+
+      t.end()
+    })
 
     t.end()
   })
