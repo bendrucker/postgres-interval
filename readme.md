@@ -5,8 +5,8 @@
 
 ## Install
 
-```
-$ npm install --save postgres-interval
+```sh
+npm install --save postgres-interval
 ```
 
 
