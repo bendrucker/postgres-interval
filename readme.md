@@ -22,6 +22,12 @@ interval.toISOString()
 // P0Y0M0DT1H2M3S
 ```
 
+This package parses the default Postgres interval style. If you have changed [`intervalstyle`](https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-INTERVALSTYLE), you will need to set it back to the default:
+
+```sql
+set intervalstyle to default;
+```
+
 ## API
 
 #### `parse(pgInterval)` -> `interval`
