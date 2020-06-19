@@ -21,9 +21,7 @@
     "interval",
     "parser"
   ],
-  "dependencies": {
-    "xtend": "^4.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "standard": "^14.0.0",
     "tape": "^5.0.0"

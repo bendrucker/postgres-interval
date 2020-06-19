@@ -1,14 +1,12 @@
 'use strict'
 
-var extend = require('xtend/mutable')
-
 module.exports = PostgresInterval
 
 function PostgresInterval (raw) {
   if (!(this instanceof PostgresInterval)) {
     return new PostgresInterval(raw)
   }
-  extend(this, parse(raw))
+  Object.assign(this, parse(raw))
 }
 var properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
 PostgresInterval.prototype.toPostgres = function () {
