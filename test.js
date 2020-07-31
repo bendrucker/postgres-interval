@@ -85,7 +85,6 @@ test(function (t) {
     t.equal(interval('00:00:00.100500').toISOStringShort(), 'PT0.1005S')
     t.equal(interval('00:00:00.123456').toISOStringShort(), 'PT0.123456S')
     t.equal(interval('-00:00:00.123456').toISOStringShort(), 'PT-0.123456S')
-    t.equal(interval('-00:00:00.123456').toISOShort(), 'PT-0.123456S')
     t.end()
   })
 

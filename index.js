@@ -73,7 +73,7 @@ PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = func
   }
 }
 
-PostgresInterval.prototype.toISOStringShort = PostgresInterval.prototype.toISOShort = function () {
+PostgresInterval.prototype.toISOStringShort = function () {
   const isoDuration = this.toISOString()
   const [date, time] = isoDuration.slice(1).split('T')
 
