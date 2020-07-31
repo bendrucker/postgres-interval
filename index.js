@@ -75,6 +75,7 @@ PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = func
 
 PostgresInterval.prototype.toISOStringShort = function () {
   const isoDuration = this.toISOString()
+
   const [date, time] = isoDuration.slice(1).split('T')
 
   const dateShort = date.replace(/(?<=([A-Za-z]|^))0[A-Za-z]+/g, '')
