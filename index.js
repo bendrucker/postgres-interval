@@ -73,6 +73,18 @@ PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = func
   }
 }
 
+PostgresInterval.prototype.toISOStringShort = PostgresInterval.prototype.toISOShort = function () {
+  const isoDuration = this.toISOString()
+  const [date, time] = isoDuration.slice(1).split('T')
+
+  const dateShort = date.replace(/(?<=([A-Za-z]|^))0[A-Za-z]+/g, '')
+  const timeShort = time.replace(/(?<=([A-Za-z]|^))0[A-Za-z]+/g, '')
+
+  if (!dateShort.length && !timeShort.length) return 'PT0S'
+
+  return `P${dateShort}${timeShort ? 'T' : ''}${timeShort}`
+}
+
 const NUMBER = '([+-]?\\d+)'
 const YEAR = NUMBER + '\\s+years?'
 const MONTH = NUMBER + '\\s+mons?'
