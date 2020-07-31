@@ -12,6 +12,7 @@ declare namespace PostgresInterval {
 
     toISO(): string;
     toISOString(): string;
+    toISOStringShort(): string;
   }
 }
 

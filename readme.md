@@ -45,9 +45,13 @@ Returns an interval string. This allows the interval object to be passed into pr
 
 #### `interval.toISOString()` -> `string`
 
-Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) compliant string.
+Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) compliant string, for example `P0Y0M0DT0H9M0S`.
 
 Also available as `interval.toISO()` for backwards compatibility.
+
+#### `interval.toISOStringShort()` -> `string`
+
+Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) compliant string shortened to minimum length, for example `PT9M`.
 
 ## License
 
