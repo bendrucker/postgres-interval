@@ -38,7 +38,6 @@ PostgresInterval.prototype.toPostgres = function () {
     .join(' ')
 }
 
-const defaultOptions = { short: false }
 const propertiesISOEquivalent = {
   years: 'Y',
   months: 'M',
@@ -50,9 +49,15 @@ const propertiesISOEquivalent = {
 const dateProperties = ['years', 'months', 'days']
 const timeProperties = ['hours', 'minutes', 'seconds']
 // according to ISO 8601
-PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = function (options = {}) {
-  const { short } = { ...defaultOptions, ...options }
+PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = function () {
+  return toISOString.call(this, { short: false })
+}
 
+PostgresInterval.prototype.toISOStringShort = function () {
+  return toISOString.call(this, { short: true })
+}
+
+function toISOString ({ short = false }) {
   const datePart = dateProperties
     .map(buildProperty, this)
     .join('')
