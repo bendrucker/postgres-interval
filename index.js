@@ -50,6 +50,14 @@ const dateProperties = ['years', 'months', 'days']
 const timeProperties = ['hours', 'minutes', 'seconds']
 // according to ISO 8601
 PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = function () {
+  return toISOString.call(this, { short: false })
+}
+
+PostgresInterval.prototype.toISOStringShort = function () {
+  return toISOString.call(this, { short: true })
+}
+
+function toISOString ({ short = false }) {
   const datePart = dateProperties
     .map(buildProperty, this)
     .join('')
@@ -58,7 +66,11 @@ PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = func
     .map(buildProperty, this)
     .join('')
 
-  return 'P' + datePart + 'T' + timePart
+  if (!timePart.length && !datePart.length) return 'PT0S'
+
+  if (!timePart.length) return `P${datePart}`
+
+  return `P${datePart}T${timePart}`
 
   function buildProperty (property) {
     let value = this[property] || 0
@@ -68,6 +80,8 @@ PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = func
     if (property === 'seconds' && this.milliseconds) {
       value = (value + this.milliseconds / 1000).toFixed(6).replace(/0+$/, '')
     }
+
+    if (short && !value) return ''
 
     return value + propertiesISOEquivalent[property]
   }
