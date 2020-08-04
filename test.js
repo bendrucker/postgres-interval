@@ -63,7 +63,7 @@ test(function (t) {
     t.equal(interval('1 year -32 days').toISOString(), 'P1Y0M-32DT0H0M0S')
     t.equal(interval('1 day -00:00:03').toISOString(), 'P0Y0M1DT0H0M-3S')
     t.equal(interval('00:00:00').toISOString(), 'P0Y0M0DT0H0M0S')
-    t.equal(interval('00:00:00.0').toISOStringShort(), 'PT0S')
+    t.equal(interval('00:00:00.0').toISOString(), 'P0Y0M0DT0H0M0S')
     t.equal(interval('00:00:01.100').toISOString(), 'P0Y0M0DT0H0M1.1S')
     t.equal(interval('00:00:00.5').toISOString(), 'P0Y0M0DT0H0M0.5S')
     t.equal(interval('00:00:00.100500').toISOString(), 'P0Y0M0DT0H0M0.1005S')
@@ -91,6 +91,7 @@ test(function (t) {
     t.equal(interval('00:00:00.100500').toISOString({ short: true }), 'PT0.1005S')
     t.equal(interval('00:00:00.123456').toISOString({ short: true }), 'PT0.123456S')
     t.equal(interval('-00:00:00.123456').toISOString({ short: true }), 'PT-0.123456S')
+    t.equal(interval('-00:00:00.123456').toISO({ short: true }), 'PT-0.123456S')
     t.end()
   })
 
