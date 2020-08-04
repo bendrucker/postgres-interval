@@ -34,7 +34,7 @@ set intervalstyle to default;
 
 ##### pgInterval
 
-*Required*
+*Required*  
 Type: `string`
 
 A Postgres interval string.
