@@ -49,9 +49,13 @@ Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) complian
 
 Also available as `interval.toISO()` for backwards compatibility.
 
-| Property        | Default value | Description                                                                                               |
-| --------------- | ------------- | --------------------------------------------------------------------------------------------------------- |
-| `options.short` | `false`       | Shortens [ISO 8061](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration output, for example `PT9M` |
+*Arguments*:
+
+`options` – Object
+
+| Property        | Default value | Description                         |
+| --------------- | ------------- | ----------------------------------- |
+| `options.short` | `false`       | Shortens output, for example `PT9M` |
 
 ## License
 
