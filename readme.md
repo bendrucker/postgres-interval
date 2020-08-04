@@ -34,7 +34,7 @@ set intervalstyle to default;
 
 ##### pgInterval
 
-*Required*  
+*Required*
 Type: `string`
 
 A Postgres interval string.
@@ -43,15 +43,15 @@ A Postgres interval string.
 
 Returns an interval string. This allows the interval object to be passed into prepared statements.
 
-#### `interval.toISOString()` -> `string`
+#### `interval.toISOString(options)` -> `string`
 
 Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) compliant string, for example `P0Y0M0DT0H9M0S`.
 
 Also available as `interval.toISO()` for backwards compatibility.
 
-#### `interval.toISOStringShort()` -> `string`
-
-Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) compliant string shortened to minimum length, for example `PT9M`.
+| Property        | Default value | Description                                                                                               |
+| --------------- | ------------- | --------------------------------------------------------------------------------------------------------- |
+| `options.short` | `false`       | Shortens [ISO 8061](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration output, for example `PT9M` |
 
 ## License
 
