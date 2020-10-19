@@ -140,3 +140,4 @@ function parse (interval) {
       return parsed
     }, {})
 }
+PostgresInterval.parse = parse
