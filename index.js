@@ -137,11 +137,12 @@ function parse (interval) {
   const minutes = minutesString
     ? timeMultiplier * parseInt(minutesString, 10)
     : 0
-  const secondsFloat = parseFloat(secondsString)
+  const secondsFloat = parseFloat(secondsString) || 0
   // secondsFloat is guaranteed to be >= 0, so floor is safe
   const absSeconds = Math.floor(secondsFloat)
   const seconds = timeMultiplier * absSeconds
-  const milliseconds = timeMultiplier * (secondsFloat - absSeconds)
+  // Without the rounding, we end up with decimals like 455.99999999999994 instead of 456
+  const milliseconds = Math.round(timeMultiplier * (secondsFloat - absSeconds) * 1000000) / 1000
   return {
     years,
     months,
