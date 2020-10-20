@@ -30,5 +30,10 @@
     "index.js",
     "index.d.ts",
     "readme.md"
-  ]
+  ],
+  "standard": {
+    "ignore": [
+      "benchmark.js"
+    ]
+  }
 }

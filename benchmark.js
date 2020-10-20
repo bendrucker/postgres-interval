@@ -51,7 +51,7 @@ for (let year = 0; year <= MAX_YEARS; year += 6) {
 const l = intervalsToParse.length
 console.log(`To process: ${l} intervals`)
 
-async function main() {
+async function main () {
   // First benchmark the full path
   for (let i = 0; i < 10; i++) {
     global.gc()
