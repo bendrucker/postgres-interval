@@ -115,10 +115,7 @@ function parse (interval) {
     return ZERO_INTERVAL
   }
 
-  const matches = INTERVAL.exec(interval)
-  if (!matches) {
-    throw new Error(`Failed to parse interval '${interval}' from PostgreSQL`)
-  }
+  const matches = INTERVAL.exec(interval) || []
 
   const [
     ,
