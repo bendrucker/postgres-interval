@@ -11,9 +11,7 @@ function PostgresInterval (raw) {
 }
 const properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
 PostgresInterval.prototype.toPostgres = function () {
-  const filtered = properties.filter(
-    (key) => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0
-  )
+  const filtered = properties.filter(key => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0)
 
   // In addition to `properties`, we need to account for fractions of seconds.
   if (this.milliseconds && filtered.indexOf('seconds') < 0) {
@@ -28,9 +26,7 @@ PostgresInterval.prototype.toPostgres = function () {
       // Account for fractional part of seconds,
       // remove trailing zeroes.
       if (property === 'seconds' && this.milliseconds) {
-        value = (value + this.milliseconds / 1000)
-          .toFixed(6)
-          .replace(/\.?0+$/, '')
+        value = (value + this.milliseconds / 1000).toFixed(6).replace(/\.?0+$/, '')
       }
 
       return value + ' ' + property
@@ -58,9 +54,13 @@ PostgresInterval.prototype.toISOStringShort = function () {
 }
 
 function toISOString ({ short = false }) {
-  const datePart = dateProperties.map(buildProperty, this).join('')
+  const datePart = dateProperties
+    .map(buildProperty, this)
+    .join('')
 
-  const timePart = timeProperties.map(buildProperty, this).join('')
+  const timePart = timeProperties
+    .map(buildProperty, this)
+    .join('')
 
   if (!timePart.length && !datePart.length) return 'PT0S'
 
