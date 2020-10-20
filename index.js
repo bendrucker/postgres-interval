@@ -7,10 +7,6 @@ function PostgresInterval (raw) {
     return new PostgresInterval(raw)
   }
 
-  for (const key in positions) {
-    this[key] = 0
-  }
-
   Object.assign(this, parse(raw))
 }
 const properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
@@ -88,56 +84,75 @@ function toISOString ({ short = false }) {
 }
 
 const NUMBER = '([+-]?\\d+)'
-const YEAR = NUMBER + '\\s+years?'
-const MONTH = NUMBER + '\\s+mons?'
-const DAY = NUMBER + '\\s+days?'
-const TIME = '([+-])?([\\d]*):(\\d\\d):(\\d\\d)\\.?(\\d{1,6})?'
-const INTERVAL = new RegExp([YEAR, MONTH, DAY, TIME].map(function (regexString) {
-  return '(' + regexString + ')?'
+const YEAR = `${NUMBER}\\s+years?`
+const MONTH = `${NUMBER}\\s+mons?`
+const DAY = `${NUMBER}\\s+days?`
+// NOTE: PostgreSQL automatically overflows seconds into minutes and minutes
+// into hours, so we can rely on minutes and seconds always being 2 digits
+// (plus decimal for seconds). The overflow stops at hours - hours do not
+// overflow into days, so could be arbitrarily long.
+const TIME = '([+-])?(\\d+):(\\d\\d):(\\d\\d(?:\\.\\d{1,6})?)'
+const INTERVAL = new RegExp(
+  '^\\s*' +
+    // All parts of an interval are optional
+    [YEAR, MONTH, DAY, TIME].map((str) => '(?:' + str + ')?').join('\\s*') +
+    '\\s*$'
+)
+
+// All intervals will have exactly these properties:
+const ZERO_INTERVAL = Object.freeze({
+  years: 0,
+  months: 0,
+  days: 0,
+  hours: 0,
+  minutes: 0,
+  seconds: 0,
+  milliseconds: 0.0
 })
-  .join('\\s*'))
 
-// Positions of values in regex match
-const positions = {
-  years: 2,
-  months: 4,
-  days: 6,
-  hours: 9,
-  minutes: 10,
-  seconds: 11,
-  milliseconds: 12
-}
-// We can use negative time
-const negatives = ['hours', 'minutes', 'seconds', 'milliseconds']
+function parse(interval) {
+  if (!interval) {
+    return ZERO_INTERVAL
+  }
 
-function parseMilliseconds (fraction) {
-  // add omitted zeroes
-  const microseconds = fraction + '000000'.slice(fraction.length)
-  return parseInt(microseconds, 10) / 1000
-}
-
-function parse (interval) {
-  if (!interval) return {}
   const matches = INTERVAL.exec(interval)
-  const isNegative = matches[8] === '-'
-  return Object.keys(positions)
-    .reduce(function (parsed, property) {
-      const position = positions[property]
-      let value = matches[position]
-      // no empty string
-      if (!value) return parsed
-      // milliseconds are actually microseconds (up to 6 digits)
-      // with omitted trailing zeroes.
-      value = property === 'milliseconds'
-        ? parseMilliseconds(value)
-        : parseInt(value, 10)
-      // no zeros
-      if (!value) return parsed
-      if (isNegative && ~negatives.indexOf(property)) {
-        value *= -1
-      }
-      parsed[property] = value
-      return parsed
-    }, {})
+  if (!matches) {
+    throw new Error(`Failed to parse interval '${interval}' from PostgreSQL`)
+  }
+
+  const [
+    ,
+    yearsString,
+    monthsString,
+    daysString,
+    plusMinusTime,
+    hoursString,
+    minutesString,
+    secondsString
+  ] = matches
+
+  const timeMultiplier = plusMinusTime === '-' ? -1 : 1
+
+  const years = yearsString ? parseInt(yearsString, 10) : 0
+  const months = monthsString ? parseInt(monthsString, 10) : 0
+  const days = daysString ? parseInt(daysString, 10) : 0
+  const hours = hoursString ? timeMultiplier * parseInt(hoursString, 10) : 0
+  const minutes = minutesString
+    ? timeMultiplier * parseInt(minutesString, 10)
+    : 0
+  const secondsFloat = parseFloat(secondsString)
+  // secondsFloat is guaranteed to be >= 0, so floor is safe
+  const absSeconds = Math.floor(secondsFloat)
+  const seconds = timeMultiplier * absSeconds
+  const milliseconds = timeMultiplier * (secondsFloat - absSeconds)
+  return {
+    years,
+    months,
+    days,
+    hours,
+    minutes,
+    seconds,
+    milliseconds
+  }
 }
 PostgresInterval.parse = parse
