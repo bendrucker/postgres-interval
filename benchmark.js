@@ -1,3 +1,5 @@
+'use strict'
+
 const PostgresInterval = require('./')
 const intervalsToParse = []
 
@@ -60,7 +62,7 @@ async function main () {
         const start = process.hrtime()
 
         for (let i = 0; i < l; i++) {
-          new PostgresInterval(intervalsToParse[i])
+          new PostgresInterval(intervalsToParse[i]) // eslint-disable-line no-new
         }
         const fin = process.hrtime(start)
         const dur = fin[0] * 1e3 + fin[1] * 1e-6
