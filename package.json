@@ -11,7 +11,7 @@
     "url": "https://www.bendrucker.me"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=12"
   },
   "scripts": {
     "test": "standard && tape test.js"
