@@ -1,4 +1,4 @@
-# postgres-interval [![Build Status](https://travis-ci.org/bendrucker/postgres-interval.svg?branch=master)](https://travis-ci.org/bendrucker/postgres-interval)
+# postgres-interval [![tests](https://github.com/bendrucker/postgres-interval/workflows/tests/badge.svg)](https://github.com/bendrucker/postgres-interval/actions?query=workflow%3Atests)
 
 > Parse Postgres interval columns
 
