@@ -17,7 +17,7 @@ var parse = require('postgres-interval')
 var interval = parse('01:02:03')
 //=> {hours: 1, minutes: 2, seconds: 3}
 interval.toPostgres()
-// 3 seconds 2 minutes 1 hours
+// 1 hour 2 minutes 3 seconds
 interval.toISOString()
 // P0Y0M0DT1H2M3S
 ```

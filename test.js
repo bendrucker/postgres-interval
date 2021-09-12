@@ -6,7 +6,7 @@ const PostgresInterval = require('./')
 
 test(function (t) {
   t.test('parser', function (t) {
-    t.equal(Object.assign(interval(), { milliseconds: 1000 }).toPostgres(), '1 seconds')
+    t.equal(Object.assign(interval(), { milliseconds: 1000 }).toPostgres(), '1 second')
     t.deepEqual(interval('01:02:03.456'), Object.assign(new PostgresInterval(), {
       hours: 1,
       minutes: 2,
@@ -43,10 +43,10 @@ test(function (t) {
   })
 
   t.test('toPostgres', function (t) {
-    t.equal(interval('01:02:03').toPostgres(), '3 seconds 2 minutes 1 hours')
-    t.equal(interval('100:02:03').toPostgres(), '3 seconds 2 minutes 100 hours')
-    t.equal(interval('1 year -32 days').toPostgres(), '-32 days 1 years')
-    t.equal(interval('1 day -00:00:03').toPostgres(), '-3 seconds 1 days')
+    t.equal(interval('01:02:03').toPostgres(), '1 hour 2 minutes 3 seconds')
+    t.equal(interval('100:02:03').toPostgres(), '100 hours 2 minutes 3 seconds')
+    t.equal(interval('1 year -32 days').toPostgres(), '1 year -32 days')
+    t.equal(interval('1 day -00:00:03').toPostgres(), '1 day -3 seconds')
     t.equal(interval('00:00:00').toPostgres(), '0')
     t.equal(interval('00:00:01.100').toPostgres(), '1.1 seconds')
     t.equal(interval('00:00:00.5').toPostgres(), '0.5 seconds')
