@@ -29,7 +29,8 @@ PostgresInterval.prototype.toPostgres = function () {
         value = (value + this.milliseconds / 1000).toFixed(6).replace(/\.?0+$/, '')
       }
 
-      const isSingular = value === 1 || value === '1'
+      // fractional seconds will be a String, all others are Number
+      const isSingular = String(value) === '1'
       // Remove plural 's' when the value is singular
       return value + ' ' + (isSingular ? property.replace(/s$/, '') : property)
     }, this)
