@@ -15,11 +15,13 @@ npm install --save postgres-interval
 ```js
 var parse = require('postgres-interval')
 var interval = parse('01:02:03')
-//=> {hours: 1, minutes: 2, seconds: 3}
+// => { hours: 1, minutes: 2, seconds: 3 }
 interval.toPostgres()
-// 3 seconds 2 minutes 1 hours
+// 1 hour 2 minutes 3 seconds
 interval.toISOString()
 // P0Y0M0DT1H2M3S
+interval.toISOStringShort()
+// PT1H2M3S
 ```
 
 This package parses the default Postgres interval style. If you have changed [`intervalstyle`](https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-INTERVALSTYLE), you will need to set it back to the default:

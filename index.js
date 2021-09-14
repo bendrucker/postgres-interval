@@ -9,12 +9,12 @@ function PostgresInterval (raw) {
 
   Object.assign(this, parse(raw))
 }
-const properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
+const properties = ['years', 'months', 'days', 'hours', 'minutes', 'seconds']
 PostgresInterval.prototype.toPostgres = function () {
   const filtered = properties.filter(key => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0)
 
   // In addition to `properties`, we need to account for fractions of seconds.
-  if (this.milliseconds && filtered.indexOf('seconds') < 0) {
+  if (this.milliseconds && !filtered.includes('seconds')) {
     filtered.push('seconds')
   }
 
@@ -29,7 +29,10 @@ PostgresInterval.prototype.toPostgres = function () {
         value = (value + this.milliseconds / 1000).toFixed(6).replace(/\.?0+$/, '')
       }
 
-      return value + ' ' + property
+      // fractional seconds will be a String, all others are Number
+      const isSingular = String(value) === '1'
+      // Remove plural 's' when the value is singular
+      return value + ' ' + (isSingular ? property.replace(/s$/, '') : property)
     }, this)
     .join(' ')
 }
