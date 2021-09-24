@@ -41,6 +41,8 @@ Type: `string`
 
 A Postgres interval string.
 
+This package is focused on parsing Postgres outputs. It optimizes for performance by assuming that inputs follow the default interval format. It does not perform any validation on the input. If any interval field is not found, its value will be set to `0` in the returned `interval`.
+
 #### `interval.toPostgres()` -> `string`
 
 Returns an interval string. This allows the interval object to be passed into prepared statements.

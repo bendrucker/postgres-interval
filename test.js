@@ -39,6 +39,18 @@ test(function (t) {
       t.end()
     })
 
+    t.test('empty', function (t) {
+      const result = interval('')
+      t.equal(result.years, 0)
+      t.equal(result.months, 0)
+      t.equal(result.days, 0)
+      t.equal(result.hours, 0)
+      t.equal(result.seconds, 0)
+      t.equal(result.milliseconds, 0)
+
+      t.end()
+    })
+
     t.end()
   })
 
