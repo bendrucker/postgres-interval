@@ -9,7 +9,7 @@ function PostgresInterval (raw) {
 
   Object.assign(this, parse(raw))
 }
-const properties = ['years', 'months', 'days', 'hours', 'minutes', 'seconds']
+const properties = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds']
 PostgresInterval.prototype.toPostgres = function () {
   const filtered = properties.filter(key => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0)
 
@@ -40,12 +40,13 @@ PostgresInterval.prototype.toPostgres = function () {
 const propertiesISOEquivalent = {
   years: 'Y',
   months: 'M',
+  weeks: 'W',
   days: 'D',
   hours: 'H',
   minutes: 'M',
   seconds: 'S'
 }
-const dateProperties = ['years', 'months', 'days']
+const dateProperties = ['years', 'months', 'weeks', 'days']
 const timeProperties = ['hours', 'minutes', 'seconds']
 // according to ISO 8601
 PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = function () {
@@ -89,6 +90,7 @@ function toISOString ({ short = false }) {
 const NUMBER = '([+-]?\\d+)'
 const YEAR = `${NUMBER}\\s+years?`
 const MONTH = `${NUMBER}\\s+mons?`
+const WEEK = `${NUMBER}\\s+weeks?`
 const DAY = `${NUMBER}\\s+days?`
 // NOTE: PostgreSQL automatically overflows seconds into minutes and minutes
 // into hours, so we can rely on minutes and seconds always being 2 digits
@@ -98,7 +100,7 @@ const TIME = '([+-])?(\\d+):(\\d\\d):(\\d\\d(?:\\.\\d{1,6})?)'
 const INTERVAL = new RegExp(
   '^\\s*' +
     // All parts of an interval are optional
-    [YEAR, MONTH, DAY, TIME].map((str) => '(?:' + str + ')?').join('\\s*') +
+    [YEAR, MONTH, WEEK, DAY, TIME].map((str) => '(?:' + str + ')?').join('\\s*') +
     '\\s*$'
 )
 
@@ -106,6 +108,7 @@ const INTERVAL = new RegExp(
 const ZERO_INTERVAL = Object.freeze({
   years: 0,
   months: 0,
+  weeks: 0,
   days: 0,
   hours: 0,
   minutes: 0,
@@ -124,6 +127,7 @@ function parse (interval) {
     ,
     yearsString,
     monthsString,
+    weeksString,
     daysString,
     plusMinusTime,
     hoursString,
@@ -135,6 +139,7 @@ function parse (interval) {
 
   const years = yearsString ? parseInt(yearsString, 10) : 0
   const months = monthsString ? parseInt(monthsString, 10) : 0
+  const weeks = weeksString ? parseInt(weeksString, 10) : 0
   const days = daysString ? parseInt(daysString, 10) : 0
   const hours = hoursString ? timeMultiplier * parseInt(hoursString, 10) : 0
   const minutes = minutesString
@@ -149,6 +154,7 @@ function parse (interval) {
   return {
     years,
     months,
+    weeks,
     days,
     hours,
     minutes,
