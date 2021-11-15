@@ -88,7 +88,7 @@ function toISOString ({ short = false }) {
 
 const NUMBER = '([+-]?\\d+)'
 const YEAR = `${NUMBER}\\s+years?`
-const MONTH = `${NUMBER}\\s+months?`
+const MONTH = `${NUMBER}\\s+mon(th)?s?`
 const DAY = `${NUMBER}\\s+days?`
 // NOTE: PostgreSQL automatically overflows seconds into minutes and minutes
 // into hours, so we can rely on minutes and seconds always being 2 digits
@@ -124,6 +124,7 @@ function parse (interval) {
     ,
     yearsString,
     monthsString,
+    ,
     daysString,
     plusMinusTime,
     hoursString,
