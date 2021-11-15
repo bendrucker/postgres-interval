@@ -27,6 +27,21 @@ test(function (t) {
     t.equal(interval('00:00:00.5000').milliseconds, 500)
     t.equal(interval('00:00:00.100500').milliseconds, 100.5)
 
+    t.deepEqual(interval('3 years'), Object.assign(new PostgresInterval(), {
+      years: 3
+    }))
+    t.deepEqual(interval('2 months'), Object.assign(new PostgresInterval(), {
+      months: 2
+    }))
+    t.deepEqual(interval('10 days'), Object.assign(new PostgresInterval(), {
+      days: 10
+    }))
+    t.deepEqual(interval('3 years 2 months 10 days'), Object.assign(new PostgresInterval(), {
+      years: 3,
+      months: 2,
+      days: 10
+    }))
+
     t.test('zero', function (t) {
       const result = interval('00:00:00')
       t.equal(result.years, 0)
@@ -102,6 +117,7 @@ test(function (t) {
     t.equal(interval('00:00:00.100500').toISOStringShort(), 'PT0.1005S')
     t.equal(interval('00:00:00.123456').toISOStringShort(), 'PT0.123456S')
     t.equal(interval('-00:00:00.123456').toISOStringShort(), 'PT-0.123456S')
+    t.equal(interval('3 years 1 month 10 days').toISOStringShort(), 'P3Y1M10D')
     t.end()
   })
 
