@@ -65,6 +65,9 @@ test(function (t) {
     t.equal(interval('00:00:00.100500').toPostgres(), '0.1005 seconds')
     t.equal(interval('00:00:00.123456').toPostgres(), '0.123456 seconds')
     t.equal(interval('-00:00:00.123456').toPostgres(), '-0.123456 seconds')
+    t.equal(interval('02:10:00').toPostgres(), '2 hours 10 minutes')
+    t.equal(interval('2 hours 10 minutes').toPostgres(), '2 hours 10 minutes')
+    t.equal(interval('-10 years 5 hours -10 minutes').toPostgres(), '-10 years 5 hours -10 minutes')
 
     t.end()
   })

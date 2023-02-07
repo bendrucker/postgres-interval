@@ -90,6 +90,11 @@ const NUMBER = '([+-]?\\d+)'
 const YEAR = `${NUMBER}\\s+years?`
 const MONTH = `${NUMBER}\\s+mons?`
 const DAY = `${NUMBER}\\s+days?`
+
+const HOUR = `([+-])?${NUMBER}\\s+hours?`
+const MINUTE = `([+-])?${NUMBER}\\s+minutes?`
+const SECOND = `([+-])?${NUMBER}\\s+seconds?`
+
 // NOTE: PostgreSQL automatically overflows seconds into minutes and minutes
 // into hours, so we can rely on minutes and seconds always being 2 digits
 // (plus decimal for seconds). The overflow stops at hours - hours do not
@@ -100,6 +105,13 @@ const INTERVAL = new RegExp(
     // All parts of an interval are optional
     [YEAR, MONTH, DAY, TIME].map((str) => '(?:' + str + ')?').join('\\s*') +
     '\\s*$'
+)
+
+const INTERVAL_VERBOSE = new RegExp(
+  '^\\s*' +
+  // All parts of an interval are optional
+  [YEAR, MONTH, DAY, HOUR, MINUTE, SECOND].map((str) => '(?:' + str + ')?').join('\\s*') +
+  '\\s*$'
 )
 
 // All intervals will have exactly these properties:
@@ -118,34 +130,78 @@ function parse (interval) {
     return ZERO_INTERVAL
   }
 
-  const matches = INTERVAL.exec(interval) || []
-
-  const [
-    ,
-    yearsString,
+  let matches = INTERVAL.exec(interval) || []
+  let yearsString,
     monthsString,
     daysString,
     plusMinusTime,
     hoursString,
     minutesString,
-    secondsString
-  ] = matches
+    secondsString,
+    plusMinusHours,
+    plusMinusMinutes,
+    plusMinusSeconds
 
-  const timeMultiplier = plusMinusTime === '-' ? -1 : 1
+  plusMinusTime = plusMinusHours = plusMinusMinutes = plusMinusSeconds = 1
+
+  if (matches.length === 0 && INTERVAL_VERBOSE.test(interval)) {
+    matches = INTERVAL_VERBOSE.exec(interval) || []
+    const [
+      ,
+      _yearsString,
+      _monthsString,
+      _daysString,
+      _plusMinusHours,
+      _hoursString,
+      _plusMinusMinutes,
+      _minutesString,
+      _plusMinusSeconds,
+      _secondsString
+    ] = matches
+
+    yearsString = _yearsString
+    monthsString = _monthsString
+    daysString = _daysString
+    hoursString = _hoursString
+    minutesString = _minutesString
+    secondsString = _secondsString
+    plusMinusHours = _plusMinusHours === '-' ? -1 : 1
+    plusMinusMinutes = _plusMinusMinutes === '-' ? -1 : 1
+    plusMinusSeconds = _plusMinusSeconds === '-' ? -1 : 1
+  } else {
+    const [
+      ,
+      _yearsString,
+      _monthsString,
+      _daysString,
+      _plusMinusTime,
+      _hoursString,
+      _minutesString,
+      _secondsString
+    ] = matches
+
+    yearsString = _yearsString
+    monthsString = _monthsString
+    daysString = _daysString
+    hoursString = _hoursString
+    minutesString = _minutesString
+    secondsString = _secondsString
+    plusMinusTime = _plusMinusTime === '-' ? -1 : 1
+  }
 
   const years = yearsString ? parseInt(yearsString, 10) : 0
   const months = monthsString ? parseInt(monthsString, 10) : 0
   const days = daysString ? parseInt(daysString, 10) : 0
-  const hours = hoursString ? timeMultiplier * parseInt(hoursString, 10) : 0
+  const hours = hoursString ? plusMinusTime * plusMinusHours * parseInt(hoursString, 10) : 0
   const minutes = minutesString
-    ? timeMultiplier * parseInt(minutesString, 10)
+    ? plusMinusTime * plusMinusMinutes * parseInt(minutesString, 10)
     : 0
   const secondsFloat = parseFloat(secondsString) || 0
   // secondsFloat is guaranteed to be >= 0, so floor is safe
   const absSeconds = Math.floor(secondsFloat)
-  const seconds = timeMultiplier * absSeconds
+  const seconds = plusMinusTime * plusMinusSeconds * absSeconds
   // Without the rounding, we end up with decimals like 455.99999999999994 instead of 456
-  const milliseconds = Math.round(timeMultiplier * (secondsFloat - absSeconds) * 1000000) / 1000
+  const milliseconds = Math.round(plusMinusTime * plusMinusSeconds * (secondsFloat - absSeconds) * 1000000) / 1000
   return {
     years,
     months,
