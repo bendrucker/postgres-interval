@@ -82,6 +82,7 @@ test(function (t) {
     t.equal(interval('00:00:00.100500').toISOString(), 'P0Y0M0DT0H0M0.1005S')
     t.equal(interval('00:00:00.123456').toISOString(), 'P0Y0M0DT0H0M0.123456S')
     t.equal(interval('-00:00:00.123456').toISOString(), 'P0Y0M0DT0H0M-0.123456S')
+    t.equal(interval('-00:00:59.999999').toISOString(), 'P0Y0M0DT0H0M-59.999999S')
     t.end()
   })
 

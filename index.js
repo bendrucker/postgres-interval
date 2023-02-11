@@ -57,8 +57,7 @@ const propertiesISOEquivalent = {
   minutes: 'M',
   seconds: 'S'
 }
-const dateProperties = ['years', 'months', 'days']
-const timeProperties = ['hours', 'minutes', 'seconds']
+
 // according to ISO 8601
 PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO =
   function () {
@@ -69,30 +68,48 @@ PostgresInterval.prototype.toISOStringShort = function () {
   return toISOString.call(this, { short: true })
 }
 
-function toISOString ({ short = false }) {
-  const datePart = dateProperties.map(buildProperty, this).join('')
+function toISOString ({ short }) {
+  let datePart = ''
 
-  const timePart = timeProperties.map(buildProperty, this).join('')
+  if (!short || this.years) {
+    datePart += this.years + propertiesISOEquivalent.years
+  }
 
-  if (!timePart.length && !datePart.length) return 'PT0S'
+  if (!short || this.months) {
+    datePart += this.months + propertiesISOEquivalent.months
+  }
 
-  if (!timePart.length) return `P${datePart}`
+  if (!short || this.days) {
+    datePart += this.days + propertiesISOEquivalent.days
+  }
+
+  let timePart = ''
+
+  if (!short || this.hours) {
+    timePart += this.hours + propertiesISOEquivalent.hours
+  }
+
+  if (!short || this.minutes) {
+    timePart += this.minutes + propertiesISOEquivalent.minutes
+  }
+
+  if (!short || (this.seconds || this.milliseconds)) {
+    if (this.milliseconds) {
+      timePart += (Math.trunc((this.seconds + this.milliseconds / 1000) * 1000000) / 1000000) + propertiesISOEquivalent.seconds
+    } else {
+      timePart += this.seconds + propertiesISOEquivalent.seconds
+    }
+  }
+
+  if (!timePart && !datePart) {
+    return 'PT0S'
+  }
+
+  if (!timePart) {
+    return `P${datePart}`
+  }
 
   return `P${datePart}T${timePart}`
-
-  function buildProperty (property) {
-    let value = this[property] || 0
-
-    // Account for fractional part of seconds,
-    // remove trailing zeroes.
-    if (property === 'seconds' && this.milliseconds) {
-      value = (value + this.milliseconds / 1000).toFixed(6).replace(/0+$/, '')
-    }
-
-    if (short && !value) return ''
-
-    return value + propertiesISOEquivalent[property]
-  }
 }
 
 const position = { value: 0 }
