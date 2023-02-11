@@ -26,6 +26,7 @@ test(function (t) {
     t.equal(interval('00:00:00.500').milliseconds, 500)
     t.equal(interval('00:00:00.5000').milliseconds, 500)
     t.equal(interval('00:00:00.100500').milliseconds, 100.5)
+    t.equal(interval('00:00:00.1005005').milliseconds, 100.5005)
 
     t.test('zero', function (t) {
       const result = interval('00:00:00')

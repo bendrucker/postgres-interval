@@ -7,11 +7,21 @@ function PostgresInterval (raw) {
     return new PostgresInterval(raw)
   }
 
-  Object.assign(this, parse(raw))
+  this.years = 0
+  this.months = 0
+  this.days = 0
+  this.hours = 0
+  this.minutes = 0
+  this.seconds = 0
+  this.milliseconds = 0
+
+  parse(this, raw)
 }
 const properties = ['years', 'months', 'days', 'hours', 'minutes', 'seconds']
 PostgresInterval.prototype.toPostgres = function () {
-  const filtered = properties.filter(key => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0)
+  const filtered = properties.filter(
+    (key) => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0
+  )
 
   // In addition to `properties`, we need to account for fractions of seconds.
   if (this.milliseconds && !filtered.includes('seconds')) {
@@ -26,7 +36,9 @@ PostgresInterval.prototype.toPostgres = function () {
       // Account for fractional part of seconds,
       // remove trailing zeroes.
       if (property === 'seconds' && this.milliseconds) {
-        value = (value + this.milliseconds / 1000).toFixed(6).replace(/\.?0+$/, '')
+        value = (value + this.milliseconds / 1000)
+          .toFixed(6)
+          .replace(/\.?0+$/, '')
       }
 
       // fractional seconds will be a String, all others are Number
@@ -48,22 +60,19 @@ const propertiesISOEquivalent = {
 const dateProperties = ['years', 'months', 'days']
 const timeProperties = ['hours', 'minutes', 'seconds']
 // according to ISO 8601
-PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = function () {
-  return toISOString.call(this, { short: false })
-}
+PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO =
+  function () {
+    return toISOString.call(this, { short: false })
+  }
 
 PostgresInterval.prototype.toISOStringShort = function () {
   return toISOString.call(this, { short: true })
 }
 
 function toISOString ({ short = false }) {
-  const datePart = dateProperties
-    .map(buildProperty, this)
-    .join('')
+  const datePart = dateProperties.map(buildProperty, this).join('')
 
-  const timePart = timeProperties
-    .map(buildProperty, this)
-    .join('')
+  const timePart = timeProperties.map(buildProperty, this).join('')
 
   if (!timePart.length && !datePart.length) return 'PT0S'
 
@@ -86,74 +95,137 @@ function toISOString ({ short = false }) {
   }
 }
 
-const NUMBER = '([+-]?\\d+)'
-const YEAR = `${NUMBER}\\s+years?`
-const MONTH = `${NUMBER}\\s+mons?`
-const DAY = `${NUMBER}\\s+days?`
-// NOTE: PostgreSQL automatically overflows seconds into minutes and minutes
-// into hours, so we can rely on minutes and seconds always being 2 digits
-// (plus decimal for seconds). The overflow stops at hours - hours do not
-// overflow into days, so could be arbitrarily long.
-const TIME = '([+-])?(\\d+):(\\d\\d):(\\d\\d(?:\\.\\d{1,6})?)'
-const INTERVAL = new RegExp(
-  '^\\s*' +
-    // All parts of an interval are optional
-    [YEAR, MONTH, DAY, TIME].map((str) => '(?:' + str + ')?').join('\\s*') +
-    '\\s*$'
-)
+const position = { value: 0 }
 
-// All intervals will have exactly these properties:
-const ZERO_INTERVAL = Object.freeze({
-  years: 0,
-  months: 0,
-  days: 0,
-  hours: 0,
-  minutes: 0,
-  seconds: 0,
-  milliseconds: 0.0
-})
+function readNextNum (interval) {
+  let val = 0
 
-function parse (interval) {
-  if (!interval) {
-    return ZERO_INTERVAL
+  while (position.value < interval.length) {
+    const char = interval[position.value]
+
+    if (char >= '0' && char <= '9') {
+      val = val * 10 + +char
+      position.value++
+    } else {
+      break
+    }
   }
 
-  const matches = INTERVAL.exec(interval) || []
+  return val
+}
 
-  const [
-    ,
-    yearsString,
-    monthsString,
-    daysString,
-    plusMinusTime,
-    hoursString,
-    minutesString,
-    secondsString
-  ] = matches
+function parseMillisecond (interval) {
+  const currentValue = readNextNum(interval)
 
-  const timeMultiplier = plusMinusTime === '-' ? -1 : 1
+  if (currentValue < 10) {
+    return currentValue * 100
+  }
 
-  const years = yearsString ? parseInt(yearsString, 10) : 0
-  const months = monthsString ? parseInt(monthsString, 10) : 0
-  const days = daysString ? parseInt(daysString, 10) : 0
-  const hours = hoursString ? timeMultiplier * parseInt(hoursString, 10) : 0
-  const minutes = minutesString
-    ? timeMultiplier * parseInt(minutesString, 10)
-    : 0
-  const secondsFloat = parseFloat(secondsString) || 0
-  // secondsFloat is guaranteed to be >= 0, so floor is safe
-  const absSeconds = Math.floor(secondsFloat)
-  const seconds = timeMultiplier * absSeconds
-  // Without the rounding, we end up with decimals like 455.99999999999994 instead of 456
-  const milliseconds = Math.round(timeMultiplier * (secondsFloat - absSeconds) * 1000000) / 1000
-  return {
-    years,
-    months,
-    days,
-    hours,
-    minutes,
-    seconds,
-    milliseconds
+  if (currentValue < 100) {
+    return currentValue * 10
+  }
+
+  if (currentValue < 1000) {
+    return currentValue
+  }
+
+  if (currentValue < 10000) {
+    return currentValue / 10
+  }
+
+  if (currentValue < 100000) {
+    return currentValue / 100
+  }
+
+  if (currentValue < 1000000) {
+    return currentValue / 1000
+  }
+
+  // slow path
+  const remainder = currentValue.toString().length - 3
+  return currentValue / Math.pow(10, remainder)
+}
+
+function parse (instance, interval) {
+  if (!interval) {
+    return
+  }
+
+  position.value = 0
+
+  let currentValue
+  let nextNegative = 1
+
+  while (position.value < interval.length) {
+    const char = interval[position.value]
+
+    if (char === '-') {
+      nextNegative = -1
+      position.value++
+      continue
+    } else if (char === '+') {
+      position.value++
+      continue
+    } else if (char === ' ') {
+      position.value++
+      continue
+    } else if (char < '0' || char > '9') {
+      position.value++
+      continue
+    } else {
+      currentValue = readNextNum(interval)
+
+      if (interval[position.value] === ':') {
+        instance.hours = currentValue ? nextNegative * currentValue : 0
+
+        position.value++
+        currentValue = readNextNum(interval)
+        instance.minutes = currentValue ? nextNegative * currentValue : 0
+
+        position.value++
+        currentValue = readNextNum(interval)
+        instance.seconds = currentValue ? nextNegative * currentValue : 0
+
+        if (interval[position.value] === '.') {
+          position.value++
+
+          currentValue = parseMillisecond(interval)
+          instance.milliseconds = currentValue ? nextNegative * currentValue : 0
+        }
+
+        return
+      }
+
+      // skip space
+      position.value++
+
+      const unit = interval[position.value]
+
+      if (unit === 'y') {
+        instance.years = currentValue ? nextNegative * currentValue : 0
+      } else if (unit === 'm') {
+        instance.months = currentValue ? nextNegative * currentValue : 0
+      } else if (unit === 'd') {
+        instance.days = currentValue ? nextNegative * currentValue : 0
+      }
+
+      nextNegative = 1
+    }
   }
 }
-PostgresInterval.parse = parse
+
+PostgresInterval.parse = function (interval) {
+  const instance = {
+    years: 0,
+    months: 0,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0
+  }
+
+  parse(instance, interval)
+
+  return instance
+}
