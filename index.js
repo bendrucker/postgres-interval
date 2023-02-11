@@ -17,36 +17,61 @@ function PostgresInterval (raw) {
 
   parse(this, raw)
 }
-const properties = ['years', 'months', 'days', 'hours', 'minutes', 'seconds']
-PostgresInterval.prototype.toPostgres = function () {
-  const filtered = properties.filter(
-    (key) => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0
-  )
 
-  // In addition to `properties`, we need to account for fractions of seconds.
-  if (this.milliseconds && !filtered.includes('seconds')) {
-    filtered.push('seconds')
+PostgresInterval.prototype.toPostgres = function () {
+  let postgresString = ''
+
+  if (this.years) {
+    postgresString += this.years === 1 ? this.years + ' year' : this.years + ' years'
   }
 
-  if (filtered.length === 0) return '0'
-  return filtered
-    .map(function (property) {
-      let value = this[property] || 0
+  if (this.months) {
+    if (postgresString.length) {
+      postgresString += ' '
+    }
 
-      // Account for fractional part of seconds,
-      // remove trailing zeroes.
-      if (property === 'seconds' && this.milliseconds) {
-        value = (value + this.milliseconds / 1000)
-          .toFixed(6)
-          .replace(/\.?0+$/, '')
-      }
+    postgresString += this.months === 1 ? this.months + ' month' : this.months + ' months'
+  }
 
-      // fractional seconds will be a String, all others are Number
-      const isSingular = String(value) === '1'
-      // Remove plural 's' when the value is singular
-      return value + ' ' + (isSingular ? property.replace(/s$/, '') : property)
-    }, this)
-    .join(' ')
+  if (this.days) {
+    if (postgresString.length) {
+      postgresString += ' '
+    }
+
+    postgresString += this.days === 1 ? this.days + ' day' : this.days + ' days'
+  }
+
+  if (this.hours) {
+    if (postgresString.length) {
+      postgresString += ' '
+    }
+
+    postgresString += this.hours === 1 ? this.hours + ' hour' : this.hours + ' hours'
+  }
+
+  if (this.minutes) {
+    if (postgresString.length) {
+      postgresString += ' '
+    }
+
+    postgresString += this.minutes === 1 ? this.minutes + ' minute' : this.minutes + ' minutes'
+  }
+
+  if (this.seconds || this.milliseconds) {
+    if (postgresString.length) {
+      postgresString += ' '
+    }
+
+    if (this.milliseconds) {
+      const value = Math.trunc((this.seconds + this.milliseconds / 1000) * 1000000) / 1000000
+
+      postgresString += value === 1 ? value + ' second' : value + ' seconds'
+    } else {
+      postgresString += this.seconds === 1 ? this.seconds + ' second' : this.seconds + ' seconds'
+    }
+  }
+
+  return postgresString === '' ? '0' : postgresString
 }
 
 const propertiesISOEquivalent = {
