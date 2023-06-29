@@ -1,7 +1,7 @@
 {
   "name": "postgres-interval",
   "main": "index.js",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Parse Postgres interval columns",
   "license": "MIT",
   "repository": "bendrucker/postgres-interval",
