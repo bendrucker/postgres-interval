@@ -26,6 +26,7 @@ test(function (t) {
     t.equal(interval('00:00:00.500').milliseconds, 500)
     t.equal(interval('00:00:00.5000').milliseconds, 500)
     t.equal(interval('00:00:00.100500').milliseconds, 100.5)
+    t.equal(interval('00:00:00.1005005').milliseconds, 100.5005)
 
     t.test('zero', function (t) {
       const result = interval('00:00:00')
@@ -65,6 +66,7 @@ test(function (t) {
     t.equal(interval('00:00:00.100500').toPostgres(), '0.1005 seconds')
     t.equal(interval('00:00:00.123456').toPostgres(), '0.123456 seconds')
     t.equal(interval('-00:00:00.123456').toPostgres(), '-0.123456 seconds')
+    t.equal(interval('-00:00:59.999999').toPostgres(), '-59.999999 seconds')
 
     t.end()
   })
@@ -81,6 +83,7 @@ test(function (t) {
     t.equal(interval('00:00:00.100500').toISOString(), 'P0Y0M0DT0H0M0.1005S')
     t.equal(interval('00:00:00.123456').toISOString(), 'P0Y0M0DT0H0M0.123456S')
     t.equal(interval('-00:00:00.123456').toISOString(), 'P0Y0M0DT0H0M-0.123456S')
+    t.equal(interval('-00:00:59.999999').toISOString(), 'P0Y0M0DT0H0M-59.999999S')
     t.end()
   })
 
