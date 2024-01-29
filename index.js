@@ -157,34 +157,27 @@ function readNextNum (interval) {
 }
 
 function parseMillisecond (interval) {
+  const previousPosition = position.value
   const currentValue = readNextNum(interval)
+  const valueStringLength = position.value - previousPosition
 
-  if (currentValue < 10) {
-    return currentValue * 100
-  }
-
-  if (currentValue < 100) {
-    return currentValue * 10
-  }
-
-  if (currentValue < 1000) {
-    return currentValue
-  }
-
-  if (currentValue < 10000) {
-    return currentValue / 10
-  }
-
-  if (currentValue < 100000) {
-    return currentValue / 100
-  }
-
-  if (currentValue < 1000000) {
-    return currentValue / 1000
+  switch (valueStringLength) {
+    case 1:
+      return currentValue * 100
+    case 2:
+      return currentValue * 10
+    case 3:
+      return currentValue
+    case 4:
+      return currentValue / 10
+    case 5:
+      return currentValue / 100
+    case 6:
+      return currentValue / 1000
   }
 
   // slow path
-  const remainder = currentValue.toString().length - 3
+  const remainder = valueStringLength - 3
   return currentValue / Math.pow(10, remainder)
 }
 
