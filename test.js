@@ -27,6 +27,12 @@ test(function (t) {
     t.equal(interval('00:00:00.5000').milliseconds, 500)
     t.equal(interval('00:00:00.100500').milliseconds, 100.5)
     t.equal(interval('00:00:00.1005005').milliseconds, 100.5005)
+    t.equal(interval('00:00:00.05').milliseconds, 50)
+    t.equal(interval('00:00:00.005').milliseconds, 5)
+    t.equal(interval('00:00:00.0005').milliseconds, 0.5)
+    t.equal(interval('00:00:00.00005').milliseconds, 0.05)
+    t.equal(interval('00:00:00.000005').milliseconds, 0.005)
+    t.equal(interval('00:00:00.0000005').milliseconds, 0.0005)
 
     t.test('zero', function (t) {
       const result = interval('00:00:00')
