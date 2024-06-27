@@ -192,7 +192,7 @@ function parse (instance, interval) {
   let nextNegative = 1
 
   while (position.value < interval.length) {
-    const char = interval[position.value]
+    let char = interval[position.value]
 
     if (char === '-') {
       nextNegative = -1
@@ -234,14 +234,28 @@ function parse (instance, interval) {
       // skip space
       position.value++
 
-      const unit = interval[position.value]
+      char = interval[position.value]
 
-      if (unit === 'y') {
+      if (char === 'y') {
         instance.years = currentValue ? nextNegative * currentValue : 0
-      } else if (unit === 'm') {
-        instance.months = currentValue ? nextNegative * currentValue : 0
-      } else if (unit === 'd') {
+      } else if (char === 'm') {
+        // go to the first char that can be used to identify months, minutes or milliseconds
+        position.value += 3
+        char = interval[position.value]
+
+        if (char === 't') {
+          instance.months = currentValue ? nextNegative * currentValue : 0
+        } else if (char === 'u') {
+          instance.minutes = currentValue ? nextNegative * currentValue : 0
+        } else if (char === 'l') {
+          instance.milliseconds = currentValue ? nextNegative * currentValue : 0
+        }
+      } else if (char === 'd') {
         instance.days = currentValue ? nextNegative * currentValue : 0
+      } else if (char === 'h') {
+        instance.hours = currentValue ? nextNegative * currentValue : 0
+      } else if (char === 's') {
+        instance.seconds = currentValue ? nextNegative * currentValue : 0
       }
 
       nextNegative = 1

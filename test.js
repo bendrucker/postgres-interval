@@ -19,6 +19,17 @@ test(function (t) {
       seconds: -3,
       milliseconds: -456
     }))
+    t.deepEqual(interval('1 year 2 months 3 days 4 hours 5 minutes 6 seconds 7 milliseconds'),
+      Object.assign(new PostgresInterval(), {
+        years: 1,
+        months: 2,
+        days: 3,
+        hours: 4,
+        minutes: 5,
+        seconds: 6,
+        milliseconds: 7
+      })
+    )
 
     t.equal(interval('00:00:00-5').milliseconds, 0, 'invalid interval format')
     t.equal(interval('00:00:00.5').milliseconds, 500)
