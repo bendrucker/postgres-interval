@@ -198,13 +198,7 @@ function parse (instance, interval) {
       nextNegative = -1
       position.value++
       continue
-    } else if (char === '+') {
-      position.value++
-      continue
-    } else if (char === ' ') {
-      position.value++
-      continue
-    } else if (char < '0' || char > '9') {
+    } else if (!(char >= '0' && char <= '9')) {
       position.value++
       continue
     } else {
