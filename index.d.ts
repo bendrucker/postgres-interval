@@ -61,6 +61,24 @@ declare namespace PostgresInterval {
      * ```
      */
     toISOStringShort(): string;
+    /**
+     * Returns a [`Temporal.Duration`](https://tc39.es/proposal-temporal/docs/duration.html) representing the interval.
+     *
+     * Requires `globalThis.Temporal` (Node 26+, or a polyfill assigned to the global). Throws otherwise.
+     *
+     * Postgres mixed-sign intervals (e.g. `1 mon -1 days`) throw a `RangeError`, because `Temporal.Duration` requires a single sign across all fields.
+     *
+     * The `Temporal` types are not yet in the default TypeScript lib. For this signature to resolve, your project needs Temporal lib types (the TypeScript lib once available, or `@js-temporal/polyfill` types).
+     *
+     * ```js
+     * var parse = require('postgres-interval')
+     * var interval = parse('01:02:03')
+     * // => { hours: 1, minutes: 2, seconds: 3 }
+     * interval.toTemporalDuration().toString()
+     * // PT1H2M3S
+     * ```
+     */
+    toTemporalDuration(): Temporal.Duration;
   }
 }
 

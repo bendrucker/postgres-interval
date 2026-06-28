@@ -57,6 +57,16 @@ Also available as `interval.toISO()` for backwards compatibility.
 
 Returns an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) compliant string shortened to minimum length, for example `PT9M`.
 
+#### `interval.toTemporalDuration()` -> `Temporal.Duration`
+
+Returns a [`Temporal.Duration`](https://tc39.es/proposal-temporal/docs/duration.html) representing the interval.
+
+Requires `globalThis.Temporal`. It ships unflagged in Node 26+. On older runtimes, install a polyfill such as [`@js-temporal/polyfill`](https://www.npmjs.com/package/@js-temporal/polyfill) and assign it to `globalThis.Temporal`. The method throws if `Temporal` is unavailable.
+
+Postgres mixed-sign intervals (e.g. `1 mon -1 days`) throw a `RangeError`. `Temporal.Duration` requires all fields to share a single sign, which these intervals violate.
+
+The `Temporal` types are not yet in the default TypeScript lib. To resolve the return type, your project needs Temporal lib types: the TypeScript lib once available, or the `@js-temporal/polyfill` types. This package adds no type dependency.
+
 ## License
 
 MIT © [Ben Drucker](http://bendrucker.me)

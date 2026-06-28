@@ -93,6 +93,25 @@ PostgresInterval.prototype.toISOStringShort = function () {
   return toISOString.call(this, { short: true })
 }
 
+PostgresInterval.prototype.toTemporalDuration = function () {
+  if (typeof globalThis.Temporal === 'undefined') {
+    throw new Error('Temporal is not available. It ships unflagged in Node 26+. On older runtimes, install a polyfill (e.g. @js-temporal/polyfill) and assign it to globalThis.Temporal.')
+  }
+
+  const totalMicroseconds = Math.round(this.milliseconds * 1000)
+
+  return globalThis.Temporal.Duration.from({
+    years: this.years,
+    months: this.months,
+    days: this.days,
+    hours: this.hours,
+    minutes: this.minutes,
+    seconds: this.seconds,
+    milliseconds: Math.trunc(totalMicroseconds / 1000),
+    microseconds: totalMicroseconds % 1000
+  })
+}
+
 function toISOString ({ short }) {
   let datePart = ''
 
