@@ -114,5 +114,40 @@ test(function (t) {
     t.end()
   })
 
+  if (typeof globalThis.Temporal !== 'undefined') {
+    t.test('toTemporalDuration', function (t) {
+      const simple = interval('01:02:03').toTemporalDuration()
+      t.equal(simple.hours, 1)
+      t.equal(simple.minutes, 2)
+      t.equal(simple.seconds, 3)
+
+      const full = interval('1 year 2 mons 3 days 04:05:06').toTemporalDuration()
+      t.equal(full.years, 1)
+      t.equal(full.months, 2)
+      t.equal(full.days, 3)
+      t.equal(full.hours, 4)
+      t.equal(full.minutes, 5)
+      t.equal(full.seconds, 6)
+
+      const subSecond = interval('00:00:00.123456').toTemporalDuration()
+      t.equal(subSecond.milliseconds, 123)
+      t.equal(subSecond.microseconds, 456)
+
+      t.throws(function () {
+        interval('1 mon -1 days').toTemporalDuration()
+      }, RangeError, 'mixed-sign interval throws')
+
+      const negative = interval('-01:02:03').toTemporalDuration()
+      t.equal(negative.sign, -1)
+      t.equal(negative.hours, -1)
+      t.equal(negative.minutes, -2)
+      t.equal(negative.seconds, -3)
+
+      t.end()
+    })
+  } else {
+    t.skip('toTemporalDuration (Temporal unavailable)')
+  }
+
   t.end()
 })
