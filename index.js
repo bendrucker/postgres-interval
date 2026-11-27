@@ -63,7 +63,7 @@ PostgresInterval.prototype.toPostgres = function () {
     }
 
     if (this.milliseconds) {
-      const value = Math.trunc((this.seconds + this.milliseconds / 1000) * 1000000) / 1000000
+      const value = Math.round((this.seconds + this.milliseconds / 1000) * 1000000) / 1000000
 
       postgresString += value === 1 ? value + ' second' : value + ' seconds'
     } else {
@@ -139,7 +139,7 @@ function toISOString ({ short }) {
 
   if (!short || (this.seconds || this.milliseconds)) {
     if (this.milliseconds) {
-      timePart += (Math.trunc((this.seconds + this.milliseconds / 1000) * 1000000) / 1000000) + propertiesISOEquivalent.seconds
+      timePart += (Math.round((this.seconds + this.milliseconds / 1000) * 1000000) / 1000000) + propertiesISOEquivalent.seconds
     } else {
       timePart += this.seconds + propertiesISOEquivalent.seconds
     }
