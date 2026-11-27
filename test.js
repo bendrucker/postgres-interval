@@ -73,6 +73,9 @@ test(function (t) {
     t.equal(interval('00:00:00.123456').toPostgres(), '0.123456 seconds')
     t.equal(interval('-00:00:00.123456').toPostgres(), '-0.123456 seconds')
     t.equal(interval('-00:00:59.999999').toPostgres(), '-59.999999 seconds')
+    t.equal(interval('00:00:01.000001').toPostgres(), '1.000001 seconds')
+    t.equal(interval('00:00:00.000105').toPostgres(), '0.000105 seconds')
+    t.equal(interval('-00:00:00.000105').toPostgres(), '-0.000105 seconds')
 
     t.end()
   })
@@ -90,6 +93,8 @@ test(function (t) {
     t.equal(interval('00:00:00.123456').toISOString(), 'P0Y0M0DT0H0M0.123456S')
     t.equal(interval('-00:00:00.123456').toISOString(), 'P0Y0M0DT0H0M-0.123456S')
     t.equal(interval('-00:00:59.999999').toISOString(), 'P0Y0M0DT0H0M-59.999999S')
+    t.equal(interval('00:00:01.000001').toISOString(), 'P0Y0M0DT0H0M1.000001S')
+    t.equal(interval('-00:00:00.000105').toISOString(), 'P0Y0M0DT0H0M-0.000105S')
     t.end()
   })
 
@@ -111,6 +116,7 @@ test(function (t) {
     t.equal(interval('00:00:00.100500').toISOStringShort(), 'PT0.1005S')
     t.equal(interval('00:00:00.123456').toISOStringShort(), 'PT0.123456S')
     t.equal(interval('-00:00:00.123456').toISOStringShort(), 'PT-0.123456S')
+    t.equal(interval('00:00:00.000105').toISOStringShort(), 'PT0.000105S')
     t.end()
   })
 
